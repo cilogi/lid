@@ -1,0 +1,1 @@
+<div class="logo"><span style="color: #aa0000;">C</span><span class="fa fa-info logo-embed"></span></div>

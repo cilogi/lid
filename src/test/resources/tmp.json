@@ -1,0 +1,18 @@
+{"storeName": "botanics", "storeCurrency": "GBP", "skus": [
+    {
+        "id": "1847972314",
+        "title": "Tuberous Begonias: An Essential Guide",
+        "description": "Tuberous begonias are sensational flowers.",
+        "thumb": {
+            "width": 57,
+            "height": 75,
+            "url": "http://ecx.images-amazon.com/images/I/51mF3JG7wHL._SL75_.jpg"
+        },
+        "image": {
+            "width": 382,
+            "height": 500,
+            "url": "http://ecx.images-amazon.com/images/I/51mF3JG7wHL.jpg"
+        },
+        "unitPrice": "16.99"
+    }
+]}

@@ -1,0 +1,10 @@
+out/
+target/
+*.iml
+.idea
+*~
+classes/
+*.zip
+bower_components/
+secret.properties
+cache.manifest

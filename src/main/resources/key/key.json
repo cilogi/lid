@@ -1,0 +1,11 @@
+{
+  "keys": [
+    {
+      "alg": "HS512",
+      "kty": "oct",
+      "use": "enc",
+      "k": "-HkYgVUsvALL1m6ZRcJ-no0AlOwiNjDH2ILcdTMzl1zoghtLeX_ylBJw0thTJZMLXwi--DbNPUygI2bcVVDlE8-3GeWsQ1pGCk2xpsU2PECX2RzZXKN-QV4KsOHfR9RZd8jWbm5BtMsHEsT1dXQVhw7qOEPa5CY-NNvpfbFD0W1Zfy0htMbvi93-fxJxDuQmAfZVPAA2JldXRR2zcNqQBBdqW62YtjM5vNDjx-8gQTKeg6Dzx4qltHYASjG0JnDFJjssKHAWEwsPGgjIQlEpmJQLB19hbI6SIPGTy5cF0VsAzK5haTep6JP8EASvnR78C02RvycvKxTmZDTOkdV_6Q",
+      "kid": "cilogi"
+    }
+  ]
+}
