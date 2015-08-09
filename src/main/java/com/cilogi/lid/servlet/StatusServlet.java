@@ -20,6 +20,7 @@
 
 package com.cilogi.lid.servlet;
 
+import com.cilogi.lid.cookie.Site;
 import com.cilogi.lid.user.LidUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ import java.io.IOException;
 public class StatusServlet extends BaseServlet {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(StatusServlet.class);
+    private static final long serialVersionUID = -7581469173812850564L;
 
     @Inject
     public StatusServlet() {
@@ -44,7 +46,10 @@ public class StatusServlet extends BaseServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String user = LidUser.getCurrentUser();
-        issueJson(response, HttpServletResponse.SC_OK, "user", (user == null) ? "" : user);
+        Site site = LidUser.getCurrentSite();
+        issueJson(response, HttpServletResponse.SC_OK,
+                "user", (user == null) ? "" : user,
+                "site", (site == null) ? "" : site.name());
     }
 
 }

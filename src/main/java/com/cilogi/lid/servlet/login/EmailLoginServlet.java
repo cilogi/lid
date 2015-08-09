@@ -36,6 +36,7 @@ import java.io.IOException;
 public class EmailLoginServlet extends BaseServlet {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(EmailLoginServlet.class);
+    private static final long serialVersionUID = -7329056757135899836L;
 
     private final SendLoginEmail sendLoginEmail;
 

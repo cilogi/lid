@@ -58,6 +58,7 @@ public class FacebookLoginServlet extends BaseServlet {
     private static final String DEFAULT_REDIRECT = "/index.html";
     private static final Token NULL_TOKEN = null;
     private static final String PROTECTED_RESOURCE_URL = "https://graph.facebook.com/me";
+    private static final long serialVersionUID = -3985426682815913784L;
 
     private final String apiKey;
     private final String apiSecret;

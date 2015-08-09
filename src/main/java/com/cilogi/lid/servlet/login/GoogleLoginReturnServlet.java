@@ -45,6 +45,7 @@ public class GoogleLoginReturnServlet extends BaseServlet {
     static final Logger LOG = LoggerFactory.getLogger(GoogleLoginReturnServlet.class);
 
     private static final String REDIRECT_ON_SUCCESS = "/index.html";
+    private static final long serialVersionUID = 4695841156936686023L;
 
     private final long cookieExpireDays;
 

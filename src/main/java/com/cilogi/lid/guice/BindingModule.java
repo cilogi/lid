@@ -24,6 +24,7 @@ package com.cilogi.lid.guice;
 
 import com.cilogi.lid.guice.annotations.CookieExpireDays;
 import com.cilogi.lid.guice.annotations.Development;
+import com.cilogi.lid.guice.annotations.EmailReturn;
 import com.google.appengine.api.utils.SystemProperty;
 import com.google.apphosting.utils.servlet.SessionCleanupServlet;
 import com.google.inject.AbstractModule;
@@ -46,31 +47,13 @@ public class BindingModule extends AbstractModule {
     protected void configure() {
         bind(SessionCleanupServlet.class).in(Scopes.SINGLETON);
 
-        // are we running on the development server or not?
         bind(Boolean.class).annotatedWith(Development.class).toInstance(isDevelopmentServer());
 
-        // default expiry for cookies, the email cookies get the built in 30 minutes default, not settable here
         bind(Long.class).annotatedWith(CookieExpireDays.class).toInstance(30L);
 
-        // the return email address, don't really need for the development server as it doesn't send email
-        bindString("returnAddress",
-                isDevelopmentServer() ? "http://localhost:8080/mailLogin" : "https://cilogi-lid.appspot.com/mailLogin");
+        bind(String.class).annotatedWith(EmailReturn.class)
+                .toInstance(isDevelopmentServer() ? "http://localhost:8080/mailLogin" : "https://cilogi-lid.appspot.com/mailLogin");
     }
-
-    private void bindString(String key, String value) {
-        bind(String.class).annotatedWith(Names.named(key)).toInstance(value);
-        //LOG.info("Bound " + key + " to " + value);
-    }
-
-    private void bindInt(String key, int value) {
-        bind(Integer.class).annotatedWith(Names.named(key)).toInstance(value);
-    }
-
-    @SuppressWarnings({"unused"})
-    private void bindBoolean(String key, boolean value) {
-        bind(Boolean.class).annotatedWith(Names.named(key)).toInstance(value);
-    }
-
 
     private static boolean isDevelopmentServer() {
         SystemProperty.Environment.Value server = SystemProperty.environment.value();

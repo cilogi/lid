@@ -45,6 +45,7 @@ public class LogoutServlet extends BaseServlet {
     static final Logger LOG = LoggerFactory.getLogger(LogoutServlet.class);
 
     private static final String DEFAULT_REDIRECT = "/index.html";
+    private static final long serialVersionUID = -5286590258162363047L;
 
     @Inject
     public LogoutServlet() {}

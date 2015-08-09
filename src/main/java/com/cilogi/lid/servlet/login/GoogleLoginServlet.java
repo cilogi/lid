@@ -40,6 +40,7 @@ public class GoogleLoginServlet extends BaseServlet {
     static final Logger LOG = LoggerFactory.getLogger(GoogleLoginServlet.class);
 
     private static final String DEFAULT_REDIRECT = "/index.html";
+    private static final long serialVersionUID = -3344803219460057213L;
 
     @Inject
     public GoogleLoginServlet() {

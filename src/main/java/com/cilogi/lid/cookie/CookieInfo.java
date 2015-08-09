@@ -61,6 +61,7 @@ public class CookieInfo implements Serializable {
     private Date expires;
     private String salt;  // useful if there is an attack where the email and expiry is known or guessed
     private Site site;  // the site which provided the email (e.g. email, google, facebook), null when emailing cookie
+    private String redirect; // if we're in the middle of authorisation and need an Email id then this can be used
 
     private static String salt() {
         byte[] data = new byte[16];

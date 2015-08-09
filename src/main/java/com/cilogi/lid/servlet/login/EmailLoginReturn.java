@@ -44,6 +44,7 @@ public class EmailLoginReturn extends BaseServlet {
     static final Logger LOG = LoggerFactory.getLogger(EmailLoginReturn.class);
 
     private static final String REDIRECT_ON_SUCCESS = "/index.html";
+    private static final long serialVersionUID = 1650249303865008594L;
 
     private final long cookieExpireDays;
 
@@ -77,12 +78,16 @@ public class EmailLoginReturn extends BaseServlet {
                 CookieHandler handler = new CookieHandler();
                 handler.setCookie(request, response, newInfo);
                 LidUser.setCurrentUser(newInfo.getEmail());
-                response.sendRedirect(REDIRECT_ON_SUCCESS);
+                response.sendRedirect(redirectURL(info));
             } catch (Exception e) {
                 issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                         "Can't set user: " + e.getMessage(), response);
             }
         }
+    }
+
+    private String redirectURL(CookieInfo info) {
+        return (info == null || info.getRedirect() == null) ? REDIRECT_ON_SUCCESS : info.getRedirect();
     }
 
 }

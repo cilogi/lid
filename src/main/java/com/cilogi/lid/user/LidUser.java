@@ -20,6 +20,7 @@
 
 package com.cilogi.lid.user;
 
+import com.cilogi.lid.cookie.Site;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -40,12 +41,22 @@ public class LidUser {
         return lu.get().getUserName();
     }
 
+    public static Site getCurrentSite() {
+        return lu.get().getSite();
+    }
+
     public static void setCurrentUser(String userName) {
         lu.get().setUserName(userName);
     }
 
+    public static void setCurrentSite(Site site) {
+        lu.get().setSite(site);
+    }
+
     @Getter @Setter
     private String userName;
+    @Getter @Setter
+    private Site site;
 
     private LidUser() {}
 

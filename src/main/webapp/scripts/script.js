@@ -2,7 +2,7 @@
 (function($) {
     'use strict';
 
-    var user;
+    var user, site;
 
     $(document).ready(function() {
         $.ajax({
@@ -11,8 +11,9 @@
             dataType: "json",
             success: function(data) {
                 user = data.user;
+                site = data.site;
                 if (user) {
-                    $("#loginStatus").show().html("<p>You are logged in as " + user + "</p>");
+                    $("#loginStatus").show().html("<p>You are logged in as " + user + " by " + site + "</p>");
                     $("#loggedIn").show();
                     $("#loggedOut").hide();
                 } else {

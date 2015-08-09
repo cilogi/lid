@@ -3,11 +3,7 @@
 <head>
     <title>Lid Demo Home</title>
 </head>
-<style>
-    .login-form {
-        padding-bottom: 10px;
-    }
-</style>
+<link href="styles/style.css" rel="stylesheet">
 <body>
 <h1>Home Page</h1>
 
@@ -20,27 +16,9 @@
 </div>
 
 <div id="loggedOut" style="display:none">
-    <form  id="loginByEmail" class="login-form" method="POST" action="/login/email">
-        <div>
-            <label for="email">Email</label>
-            <input type="text" name="email" id="email">
-        </div>
-        <div>
-            <button tpe="submit">Login by Email</button>
-        </div>
-    </form>
-    <form class="login-form" method="POST" action="/login/google">
-        <div>
-            <button type="submit" id="googleLogin">Google Login</button>
-        </div>
-    </form>
-    <form class="login-form" method="POST" action="/login/facebook">
-        <div>
-            <button type="submit">Facebook Login</button>
-        </div>
-    </form>
+    <a href="/login.html">Login</a>
 </div>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<script src="scripts/home.js"></script>
+<script src="scripts/script.js"></script>
 </body>
 </html>

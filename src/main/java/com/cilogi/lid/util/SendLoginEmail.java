@@ -21,6 +21,7 @@
 package com.cilogi.lid.util;
 
 import com.cilogi.lid.cookie.CookieInfo;
+import com.cilogi.lid.guice.annotations.EmailReturn;
 import lombok.NonNull;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class SendLoginEmail {
     private final SendEmail sendEmail;
 
     @Inject
-    public SendLoginEmail(@Named("returnAddress") String returnAddress) {
+    public SendLoginEmail(@EmailReturn String returnAddress) {
         this.returnAddress = returnAddress;
         this.sendEmail = new SendEmail("noreply@cilogi-lid.appspot.com");
     }
