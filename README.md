@@ -2,9 +2,11 @@
 
 This code provides a simple identity solution for App Engine on Java.
 Its similar to the built-in user service but works with Google, Facebook
-and general Email, so that anyone with an Email address can use it.
+and  Email, so that anyone with an Email address can use it.
 
-The Email solution sends an  Email to  users who wants to log in. They
+Google uses the built-in App Engine
+
+The Email solution sends an Email to  users who wants to log in. They
 then have to click through a one-time (N minute validity) address which then
 sets a cookie.  The cookie persists (unless the user logs out). There is no password,
 you have to log in my Email each time.
