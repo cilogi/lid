@@ -44,19 +44,20 @@ public class GoogleLoginReturnServlet extends BaseServlet {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(GoogleLoginReturnServlet.class);
 
-    private static final String REDIRECT_ON_SUCCESS = "/index.html";
+    private static final String DEFAULT_REDIRECT = "/index.html"; // must not require auth
     private static final long serialVersionUID = 4695841156936686023L;
 
     private final long cookieExpireDays;
 
     @Inject
     public GoogleLoginReturnServlet(@CookieExpireDays long cookieExpireDays) {
-        this.cookieExpireDays = cookieExpireDays;
+        this.cookieExpireDays = cookieExpireDays;;
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User user = UserServiceFactory.getUserService().getCurrentUser();
+        String redirectURL = stringParameter("redirect", request, DEFAULT_REDIRECT);;
         if (user != null) {
             String email = user.getEmail();
             CookieInfo info = new CookieInfo(email)
@@ -65,7 +66,9 @@ public class GoogleLoginReturnServlet extends BaseServlet {
             CookieHandler handler = new CookieHandler();
             handler.setCookie(request, response, info);
             LidUser.setCurrentUser(email);
-            response.sendRedirect(REDIRECT_ON_SUCCESS);
+            response.sendRedirect(redirectURL);
+        } else {
+            response.sendRedirect(DEFAULT_REDIRECT);
         }
     }
 }

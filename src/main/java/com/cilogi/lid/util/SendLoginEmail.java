@@ -46,11 +46,11 @@ public class SendLoginEmail {
         this.sendEmail = new SendEmail("noreply@cilogi-lid.appspot.com");
     }
 
-    public void send(@NonNull String emailAddress) {
+    public void send(@NonNull String emailAddress, String redirectURL) {
         if (!isLegalEmail(emailAddress)) {
             throw new IllegalArgumentException("The email address " + emailAddress + " isn't valid");
         }
-        CookieInfo info = new CookieInfo(emailAddress);
+        CookieInfo info = new CookieInfo(emailAddress).setRedirect(redirectURL);
         String token = info.toEncryptedString();
         String fullAddress = returnAddress + "?token=" + token;
         LOG.info("Address is " + fullAddress);

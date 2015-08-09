@@ -22,6 +22,7 @@
 package com.cilogi.lid.guice;
 
 
+import com.cilogi.lid.guice.annotations.AuthRedirect;
 import com.cilogi.lid.guice.annotations.CookieExpireDays;
 import com.cilogi.lid.guice.annotations.Development;
 import com.cilogi.lid.guice.annotations.EmailReturn;
@@ -30,6 +31,7 @@ import com.google.apphosting.utils.servlet.SessionCleanupServlet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import com.google.inject.name.Names;
+import freemarker.ext.servlet.FreemarkerServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +47,7 @@ public class BindingModule extends AbstractModule {
 
     @Override
     protected void configure() {
+        bind(FreemarkerServlet.class).in(Scopes.SINGLETON);
         bind(SessionCleanupServlet.class).in(Scopes.SINGLETON);
 
         bind(Boolean.class).annotatedWith(Development.class).toInstance(isDevelopmentServer());
@@ -53,6 +56,8 @@ public class BindingModule extends AbstractModule {
 
         bind(String.class).annotatedWith(EmailReturn.class)
                 .toInstance(isDevelopmentServer() ? "http://localhost:8080/mailLogin" : "https://cilogi-lid.appspot.com/mailLogin");
+        bind(String.class).annotatedWith(AuthRedirect.class)
+                .toInstance("authRedirect");
     }
 
     private static boolean isDevelopmentServer() {

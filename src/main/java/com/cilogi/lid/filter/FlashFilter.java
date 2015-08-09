@@ -33,6 +33,10 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Map;
 
+/**
+ * Filter for providing a version of FLash scope, but its a little expensive on
+ * AppEngine as each call will hit the data-store containing session data
+ */
 @Singleton
 public class FlashFilter implements Filter {
     @SuppressWarnings("unused")

@@ -23,6 +23,7 @@ package com.cilogi.lid.servlet.login;
 import com.cilogi.lid.cookie.CookieHandler;
 import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.cookie.Site;
+import com.cilogi.lid.guice.annotations.AuthRedirect;
 import com.cilogi.lid.guice.annotations.CookieExpireDays;
 import com.cilogi.lid.guice.annotations.Development;
 import com.cilogi.lid.servlet.BaseServlet;
@@ -64,13 +65,17 @@ public class FacebookLoginServlet extends BaseServlet {
     private final String apiSecret;
     private final String host;
     private final long cookieExpireDays;
+    private final String authRedirect;
 
     @Inject
-    public FacebookLoginServlet(@Development boolean isDevelopmentServer, @CookieExpireDays long cookieExpireDays) {
+    public FacebookLoginServlet(@Development boolean isDevelopmentServer,
+                                @CookieExpireDays long cookieExpireDays,
+                                @AuthRedirect String authRedirect) {
         apiKey =    key(isDevelopmentServer, "apiKey");
         apiSecret = key(isDevelopmentServer, "apiSecret");
         host =      key(isDevelopmentServer, "host");
         this.cookieExpireDays = cookieExpireDays;
+        this.authRedirect = authRedirect;
     }
 
     /*
@@ -78,16 +83,9 @@ public class FacebookLoginServlet extends BaseServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String redirectURL = stringParameter("redirect", request, DEFAULT_REDIRECT);
-        if (!redirectURL.startsWith("/")) {
-            issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_BAD_REQUEST,
-                    "The redirect does not start with /: " + redirectURL, response);
-        } else {
-            putSession("redirectURL", redirectURL, request);
-            String currentUri = request.getRequestURI();
-            String loginURL = loginURL(currentUri);
-            response.sendRedirect(loginURL);
-        }
+        String currentUri = request.getRequestURI();
+        String loginURL = loginURL(currentUri);
+        response.sendRedirect(loginURL);
     }
 
     /*
@@ -113,7 +111,7 @@ public class FacebookLoginServlet extends BaseServlet {
                 handler.setCookie(request, response, cookieInfo);
                 LidUser.setCurrentUser(email);
 
-                String redirectURL = getAndDeleteSession("redirectURL", request, DEFAULT_REDIRECT);
+                String redirectURL = getAndDeleteSession(authRedirect, request, DEFAULT_REDIRECT);
                 revokeToken(info.getToken(), request, response, redirectURL);  // not totally sure about this, but it seems safer to revoke token immediately
             }
         } catch (Exception e) {

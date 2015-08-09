@@ -22,6 +22,7 @@
 package com.cilogi.lid.servlet;
 
 import com.cilogi.lid.user.LidUser;
+import com.cilogi.lid.util.session.SessionAttributes;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
 import com.google.common.base.Preconditions;
@@ -65,21 +66,11 @@ public class BaseServlet extends HttpServlet {
     }
 
     protected void putSession(@NonNull String key, @NonNull String value, @NonNull HttpServletRequest request) {
-        HttpSession session = request.getSession(true);
-        session.setAttribute(key, value);
+        new SessionAttributes(request).put(key, value);
     }
 
     protected String getAndDeleteSession(@NonNull String key, @NonNull HttpServletRequest request, String deflt) {
-        HttpSession session = request.getSession(false);
-        if (session == null) {
-            return deflt;
-        } else {
-            String value = (String)session.getAttribute(key);
-            if (value != null) {
-                session.removeAttribute(key);
-            }
-            return value;
-        }
+        return new SessionAttributes(request).getAndDelete(key, deflt);
     }
 
     static Map<String,Object> args2map(@NonNull Object... args) {

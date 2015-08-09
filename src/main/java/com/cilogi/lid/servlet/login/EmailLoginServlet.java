@@ -20,8 +20,10 @@
 
 package com.cilogi.lid.servlet.login;
 
+import com.cilogi.lid.guice.annotations.AuthRedirect;
 import com.cilogi.lid.servlet.BaseServlet;
 import com.cilogi.lid.util.SendLoginEmail;
+import com.cilogi.lid.util.session.SessionAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,22 +41,25 @@ public class EmailLoginServlet extends BaseServlet {
     private static final long serialVersionUID = -7329056757135899836L;
 
     private final SendLoginEmail sendLoginEmail;
+    private final String authRedirect;
 
     @Inject
-    public EmailLoginServlet(SendLoginEmail sendLoginEmail) {
+    public EmailLoginServlet(SendLoginEmail sendLoginEmail, @AuthRedirect String authRedirect) {
         this.sendLoginEmail = sendLoginEmail;
+        this.authRedirect = authRedirect;
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
+        String redirectURL = new SessionAttributes(request).getAndDelete(authRedirect, null);
         if (email == null) {
             issueJson(response, HttpServletResponse.SC_BAD_REQUEST, "message", "There is no 'email' parameter");
         } else {
             if (!sendLoginEmail.isLegalEmail(email)) {
                 issueJson(response, HttpServletResponse.SC_BAD_REQUEST, "message", "Email address " + email + " is invalid");
             } else {
-                sendLoginEmail.send(email);
+                sendLoginEmail.send(email, redirectURL);
                 issueJson(response, HttpServletResponse.SC_OK, "message", "Email sent to " + email);
             }
         }
