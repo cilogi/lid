@@ -6,9 +6,10 @@
 <body>
 <h1>Home Page</h1>
 
-<p id="loggedIn">Acquiring Login Status...</p>
+<p id="loginStatus">Acquiring Login Status...</p>
 
-
+<div id = "loggedIn">
+    <button id="logout">Logout</button>
 </div>
 
 <div id="loggedOut" style="display:none">
@@ -17,7 +18,15 @@
             <label for="email">Email</label>
             <input type="text" name="email" id="email">
         </div>
-        <button id="loginByEmail">Login by Email</button>
+        <div>
+            <button id="loginByEmail">Login by Email</button>
+        </div>
+        <div>
+            <button id="googleLogin">Google Login</button>
+        </div>
+        <div>
+            <button id="facebookLogin">Facebook Login</button>
+        </div>
 
     </form>
 </div>

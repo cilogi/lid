@@ -34,7 +34,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-@SuppressWarnings({"unused"})
 public class BaseServlet extends HttpServlet {
     @SuppressWarnings("unused")
     static final Logger LOG = Logger.getLogger(BaseServlet.class.getName());
@@ -70,13 +69,6 @@ public class BaseServlet extends HttpServlet {
     }
 
 
-    protected void cache(HttpServletResponse response, int seconds) {
-        Preconditions.checkArgument(seconds > 0);
-        response.setHeader("Pragma", "Public");
-        response.setHeader("Cache-Control", "public, no-transform, max-age="+seconds);
-
-    }
-
     protected String stringParameter(@NonNull String name, HttpServletRequest request, String deflt) {
         String s = request.getParameter(name);
         return (s == null) ? deflt : s;
@@ -87,14 +79,11 @@ public class BaseServlet extends HttpServlet {
         return (s == null) ? deflt : Boolean.parseBoolean(s);
     }
 
-
     protected String getCurrentUserName() {
         return LidUser.getCurrentUser();
     }
 
 
-    protected static String stripSlash(String name) {
-        return name.startsWith("/") ? name.substring(1) : name;
-    }
+
 
 }

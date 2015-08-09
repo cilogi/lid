@@ -80,6 +80,11 @@ public class CookieHandler {
         cookie.saveTo(request, response);
     }
 
+    public void removeCookie(HttpServletRequest request, HttpServletResponse response) {
+        HttpCookie cookie = new HttpCookie(LID_COOKIE_NAME);
+        cookie.removeFrom(request, response);
+    }
+
     public static String encode(@NonNull CookieInfo info) {
         TEA tea = new TEA(KEY128);
         String dataString = info.toJSONString();
