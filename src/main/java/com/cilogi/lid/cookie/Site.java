@@ -1,6 +1,6 @@
 // Copyright (c) 2015 Cilogi. All Rights Reserved.
 //
-// File:        GenKey.java  (08/08/15)
+// File:        Site.java  (09/08/15)
 // Author:      tim
 //
 // Copyright in the whole and every part of this source file belongs to
@@ -20,26 +20,6 @@
 
 package com.cilogi.lid.cookie;
 
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.security.SecureRandom;
-
-
-public class GenKey {
-    @SuppressWarnings("unused")
-    static final Logger LOG = LoggerFactory.getLogger(GenKey.class);
-
-    public GenKey() {
-
-    }
-
-    public static void main(String[] args) {
-        SecureRandom rand = new SecureRandom();
-        byte[] data = new byte[16];
-        rand.nextBytes(data);
-        String s = Base64.encodeBase64String(data);
-        System.out.println(s);
-    }
+public enum Site {
+    email, google, facebook
 }

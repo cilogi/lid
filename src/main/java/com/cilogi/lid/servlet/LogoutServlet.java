@@ -21,13 +21,20 @@
 package com.cilogi.lid.servlet;
 
 import com.cilogi.lid.cookie.CookieHandler;
+import com.cilogi.lid.cookie.CookieInfo;
+import com.cilogi.lid.cookie.Site;
 import com.cilogi.lid.user.LidUser;
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserService;
+import com.google.appengine.api.users.UserServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -37,21 +44,34 @@ public class LogoutServlet extends BaseServlet {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(LogoutServlet.class);
 
+    private static final String DEFAULT_REDIRECT = "/index.html";
 
     @Inject
     public LogoutServlet() {}
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String redirectUrl = stringParameter("redirect", request, DEFAULT_REDIRECT);
         try {
-            String user = LidUser.getCurrentUser();
             LidUser.setCurrentUser(null);
             CookieHandler handler = new CookieHandler();
-            handler.removeCookie(request, response);
-            issueJson(response, HttpServletResponse.SC_OK, "message", (user == null) ? "There is no user to logout" : "User " + user + " logged out");
+            CookieInfo info = handler.removeCookie(request, response);
+            if (info != null && info.getSite() == Site.google) {
+                logoutGoogle(redirectUrl, response);
+            }
+            response.sendRedirect(redirectUrl);
         } catch (Exception e) {
             LOG.warn("Error logging out: " + e.getMessage());
-            issueJson(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "message", "Internal error: " + e.getMessage());
+            response.sendRedirect(redirectUrl);
+        }
+    }
+
+    static void logoutGoogle(String redirectUrl, HttpServletResponse response) throws IOException {
+        UserService service = UserServiceFactory.getUserService();
+        User user = service.getCurrentUser();
+        if (user != null) {
+            String logoutUrl = service.createLogoutURL(redirectUrl);
+            response.sendRedirect(logoutUrl);
         }
     }
 

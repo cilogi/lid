@@ -1,6 +1,6 @@
 // Copyright (c) 2015 Cilogi. All Rights Reserved.
 //
-// File:        EmailLoginServlet.java  (08/08/15)
+// File:        GoogleLoginServlet.java  (09/08/15)
 // Author:      tim
 //
 // Copyright in the whole and every part of this source file belongs to
@@ -18,9 +18,11 @@
 //
 
 
-package com.cilogi.lid.servlet;
+package com.cilogi.lid.servlet.login;
 
-import com.cilogi.lid.util.SendLoginEmail;
+import com.cilogi.lid.servlet.BaseServlet;
+import com.google.appengine.api.users.UserServiceFactory;
+import com.google.common.net.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,31 +32,31 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 
 @Singleton
-public class EmailLoginServlet extends BaseServlet {
+public class GoogleLoginServlet extends BaseServlet {
     @SuppressWarnings("unused")
-    static final Logger LOG = LoggerFactory.getLogger(EmailLoginServlet.class);
+    static final Logger LOG = LoggerFactory.getLogger(GoogleLoginServlet.class);
 
-    private final SendLoginEmail sendLoginEmail;
+    private static final String DEFAULT_REDIRECT = "/index.html";
 
     @Inject
-    public EmailLoginServlet(SendLoginEmail sendLoginEmail) {
-        this.sendLoginEmail = sendLoginEmail;
+    public GoogleLoginServlet() {
+
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String email = request.getParameter("email");
-        if (email == null) {
-            issueJson(response, HttpServletResponse.SC_BAD_REQUEST, "message", "There is no 'email' parameter");
-        } else {
-            if (!sendLoginEmail.isLegalEmail(email)) {
-                issueJson(response, HttpServletResponse.SC_BAD_REQUEST, "message", "Email address " + email + " is invalid");
-            } else {
-                sendLoginEmail.send(email);
-                issueJson(response, HttpServletResponse.SC_OK, "message", "Email sent to " + email);
-            }
+        String redirect = stringParameter("redirect", request, DEFAULT_REDIRECT);
+        try {
+            String url = UserServiceFactory.getUserService().createLoginURL("/login/googleReturn?redirect=" + URLEncoder.encode(redirect, "UTF-8"));
+            response.sendRedirect(url);
+        } catch (Exception e) {
+            LOG.warn("Can't login: " + e.getMessage());
+            issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Can't login: " + e.getMessage(), response);
         }
     }
+
+
 }

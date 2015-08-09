@@ -20,10 +20,14 @@
 
 package com.cilogi.lid.cookie;
 
+import com.cilogi.lid.util.Secrets;
+import com.cilogi.lid.util.TEA;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.NonNull;
+import lombok.experimental.Accessors;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,25 +44,34 @@ import java.util.concurrent.TimeUnit;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@Accessors(fluent=false,chain=true)
 public class CookieInfo implements Serializable {
     @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(CookieInfo.class);
     private static final long serialVersionUID = 8565488346752323876L;
 
-    // users have to re-login every 3- days, so that va;id cookies can't sit around forever
+    private static final byte[] KEY128 = Base64.decodeBase64(Secrets.get("jose.128"));
 
-    private static final long EXPIRY = TimeUnit.MILLISECONDS.convert(30L, TimeUnit.DAYS);
-
+    // default offer is valid for 30 minutes, assuming that its an email
+    // you need longer for cookies, perhaps 30 days.
+    private static final long EXPIRY = TimeUnit.MILLISECONDS.convert(30L, TimeUnit.MINUTES);
     private static final SecureRandom rand = new SecureRandom();
 
     private String email;
     private Date expires;
-    private String salt;
+    private String salt;  // useful if there is an attack where the email and expiry is known or guessed
+    private Site site;  // the site which provided the email (e.g. email, google, facebook), null when emailing cookie
 
     private static String salt() {
         byte[] data = new byte[16];
         rand.nextBytes(data);
         return Base64.encodeBase64String(data);
+    }
+
+    public static CookieInfo fromEncryptedString(@NonNull String crypt) {
+        TEA tea = new TEA(KEY128);
+        String dataString = tea.decrypt(crypt);
+        return fromJSONString(dataString);
     }
 
     public static CookieInfo fromJSONString(@NonNull String data) {
@@ -81,11 +94,27 @@ public class CookieInfo implements Serializable {
         this.salt = salt();
     }
 
+    @JsonIgnore
+    public boolean isExpired() {
+        return (expires == null) ? true : expires.getTime() < new Date().getTime();
+    }
+
+    public CookieInfo expire(long amount, @NonNull TimeUnit unit) {
+        setExpires(new Date(new Date().getTime() + TimeUnit.MILLISECONDS.convert(amount, unit)));
+        return this;
+    }
+
     public String toJSONString() {
         try {
             return new ObjectMapper().writeValueAsString(this);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String toEncryptedString() {
+        TEA tea = new TEA(KEY128);
+        String dataString = this.toJSONString();
+        return tea.encrypt(dataString);
     }
 }

@@ -1,6 +1,6 @@
 // Copyright (c) 2015 Cilogi. All Rights Reserved.
 //
-// File:        GenKey.java  (08/08/15)
+// File:        CookieExpireDays.java  (09/08/15)
 // Author:      tim
 //
 // Copyright in the whole and every part of this source file belongs to
@@ -18,28 +18,20 @@
 //
 
 
-package com.cilogi.lid.cookie;
+package com.cilogi.lid.guice.annotations;
 
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.inject.BindingAnnotation;
 
-import java.security.SecureRandom;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 
-public class GenKey {
-    @SuppressWarnings("unused")
-    static final Logger LOG = LoggerFactory.getLogger(GenKey.class);
-
-    public GenKey() {
-
-    }
-
-    public static void main(String[] args) {
-        SecureRandom rand = new SecureRandom();
-        byte[] data = new byte[16];
-        rand.nextBytes(data);
-        String s = Base64.encodeBase64String(data);
-        System.out.println(s);
-    }
+@BindingAnnotation
+@Retention(RetentionPolicy.RUNTIME)
+@Target( { FIELD, PARAMETER, METHOD })
+public @interface CookieExpireDays {
 }

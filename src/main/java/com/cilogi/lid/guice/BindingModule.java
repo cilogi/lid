@@ -22,15 +22,13 @@
 package com.cilogi.lid.guice;
 
 
-
+import com.cilogi.lid.guice.annotations.CookieExpireDays;
 import com.cilogi.lid.guice.annotations.Development;
 import com.google.appengine.api.utils.SystemProperty;
-
 import com.google.apphosting.utils.servlet.SessionCleanupServlet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import com.google.inject.name.Names;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +46,15 @@ public class BindingModule extends AbstractModule {
     protected void configure() {
         bind(SessionCleanupServlet.class).in(Scopes.SINGLETON);
 
+        // are we running on the development server or not?
         bind(Boolean.class).annotatedWith(Development.class).toInstance(isDevelopmentServer());
 
-        bindString("returnAddress", isDevelopmentServer() ? "http://localhost:8080/mailLogin" : "https://cilogi-lid.appspot.com/mailLogin");
+        // default expiry for cookies, the email cookies get the built in 30 minutes default, not settable here
+        bind(Long.class).annotatedWith(CookieExpireDays.class).toInstance(30L);
+
+        // the return email address, don't really need for the development server as it doesn't send email
+        bindString("returnAddress",
+                isDevelopmentServer() ? "http://localhost:8080/mailLogin" : "https://cilogi-lid.appspot.com/mailLogin");
     }
 
     private void bindString(String key, String value) {

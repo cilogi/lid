@@ -1,6 +1,6 @@
 // Copyright (c) 2015 Cilogi. All Rights Reserved.
 //
-// File:        GoogleLoginServlet.java  (09/08/15)
+// File:        EmailLoginServlet.java  (08/08/15)
 // Author:      tim
 //
 // Copyright in the whole and every part of this source file belongs to
@@ -18,9 +18,10 @@
 //
 
 
-package com.cilogi.lid.servlet;
+package com.cilogi.lid.servlet.login;
 
-import com.google.appengine.api.users.UserServiceFactory;
+import com.cilogi.lid.servlet.BaseServlet;
+import com.cilogi.lid.util.SendLoginEmail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,24 +33,29 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Singleton
-public class GoogleLoginServlet extends BaseServlet {
+public class EmailLoginServlet extends BaseServlet {
     @SuppressWarnings("unused")
-    static final Logger LOG = LoggerFactory.getLogger(GoogleLoginServlet.class);
+    static final Logger LOG = LoggerFactory.getLogger(EmailLoginServlet.class);
+
+    private final SendLoginEmail sendLoginEmail;
 
     @Inject
-    public GoogleLoginServlet() {
-
+    public EmailLoginServlet(SendLoginEmail sendLoginEmail) {
+        this.sendLoginEmail = sendLoginEmail;
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try {
-            String url = UserServiceFactory.getUserService().createLoginURL("/login/googleReturn");
-            issueJson(response, HttpServletResponse.SC_OK, "url", url);
-        } catch (Exception e) {
-            issueJson(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "message", "Internal error: " + e.getMessage());
+        String email = request.getParameter("email");
+        if (email == null) {
+            issueJson(response, HttpServletResponse.SC_BAD_REQUEST, "message", "There is no 'email' parameter");
+        } else {
+            if (!sendLoginEmail.isLegalEmail(email)) {
+                issueJson(response, HttpServletResponse.SC_BAD_REQUEST, "message", "Email address " + email + " is invalid");
+            } else {
+                sendLoginEmail.send(email);
+                issueJson(response, HttpServletResponse.SC_OK, "message", "Email sent to " + email);
+            }
         }
     }
-
-
 }

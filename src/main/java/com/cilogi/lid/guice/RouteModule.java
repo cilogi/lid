@@ -22,7 +22,12 @@
 package com.cilogi.lid.guice;
 
 import com.cilogi.lid.filter.UserFilter;
-import com.cilogi.lid.servlet.*;
+import com.cilogi.lid.servlet.login.EmailLoginReturn;
+import com.cilogi.lid.servlet.login.EmailLoginServlet;
+import com.cilogi.lid.servlet.LogoutServlet;
+import com.cilogi.lid.servlet.StatusServlet;
+import com.cilogi.lid.servlet.login.GoogleLoginReturnServlet;
+import com.cilogi.lid.servlet.login.GoogleLoginServlet;
 import com.google.apphosting.utils.servlet.SessionCleanupServlet;
 import com.google.inject.servlet.ServletModule;
 import org.slf4j.Logger;
@@ -43,7 +48,7 @@ public class RouteModule extends ServletModule {
 
         serve("/_ah/sessioncleanup").with(SessionCleanupServlet.class);
 
-        serve("/mailLogin").with(MailReplyServlet.class);
+        serve("/mailLogin").with(EmailLoginReturn.class);
         serve("/login/email").with(EmailLoginServlet.class);
         serve("/login/google").with(GoogleLoginServlet.class);
         serve("/login/googleReturn").with(GoogleLoginReturnServlet.class);

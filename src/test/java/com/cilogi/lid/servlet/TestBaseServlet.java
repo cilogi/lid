@@ -1,6 +1,6 @@
 // Copyright (c) 2015 Cilogi. All Rights Reserved.
 //
-// File:        TestCookieHandler.java  (08/08/15)
+// File:        TestBaseServlet.java  (09/08/15)
 // Author:      tim
 //
 // Copyright in the whole and every part of this source file belongs to
@@ -18,26 +18,26 @@
 //
 
 
-package com.cilogi.lid.cookie;
+package com.cilogi.lid.servlet;
 
-import com.cilogi.lid.util.TEA;
-import com.cilogi.util.Base64Codec;
-import com.cilogi.util.Secrets;
-import com.google.common.base.Charsets;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.Map;
+
 import static org.junit.Assert.*;
 
-public class TestCookieHandler {
+public class TestBaseServlet {
     @SuppressWarnings("unused")
-    static final Logger LOG = LoggerFactory.getLogger(TestCookieHandler.class);
+    static final Logger LOG = LoggerFactory.getLogger(TestBaseServlet.class);
 
 
-    public TestCookieHandler() {
+    public TestBaseServlet() {
     }
 
     @Before
@@ -46,23 +46,10 @@ public class TestCookieHandler {
     }
 
     @Test
-    public void testEncryptDecrypt() {
-        CookieInfo info = new CookieInfo("fred@flintstone.org");
-        String token = CookieHandler.encode(info);
-        CookieInfo back = CookieHandler.decode(token);
-        assertEquals(info, back);
+    public void testArgs2Map() throws IOException {
+        Map<String,Object> map = BaseServlet.args2map("a", 1, "b", 2, "c", "rest");
+        String out = new ObjectMapper().writeValueAsString(map);
+        assertEquals("{\"a\":1,\"b\":2,\"c\":\"rest\"}", out);
     }
 
-    @Test
-    public void testBytes() {
-        CookieInfo info = new CookieInfo("fred@flintstone.org");
-        String infoString = info.toJSONString();
-        byte[] raw = infoString.getBytes(Charsets.UTF_8);
-        byte[] key = Base64Codec.decode(Secrets.get("jose.128"));
-        assertEquals(16, key.length);
-        TEA tea = new TEA(key);
-        byte[] coded = tea.encrypt(raw);
-        byte[] back = tea.decrypt(coded);
-        assertArrayEquals(back, raw);
-    }
 }

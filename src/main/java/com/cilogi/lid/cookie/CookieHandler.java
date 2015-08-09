@@ -20,14 +20,9 @@
 
 package com.cilogi.lid.cookie;
 
-import com.cilogi.lid.util.TEA;
-import com.cilogi.util.Secrets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import lombok.NonNull;
-import org.apache.commons.codec.binary.Base64;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,15 +39,14 @@ public class CookieHandler {
     static final Logger LOG = LoggerFactory.getLogger(CookieHandler.class);
 
     private static final String LID_COOKIE_NAME = "Cilogi_LidCookie";
-    private static final byte[] KEY128 = Base64.decodeBase64(Secrets.get("jose.128"));
 
     private static final LoadingCache<String, CookieInfo> cookieCache = CacheBuilder.newBuilder()
         .concurrencyLevel(16)
         .maximumSize(100)
         .expireAfterWrite(5L, TimeUnit.MINUTES)
         .build(new CacheLoader<String, CookieInfo>() {
-            public CookieInfo load(String encrypted) throws JSONException {
-                return decode(encrypted);
+            public CookieInfo load(String encrypted)  {
+                return CookieInfo.fromEncryptedString(encrypted);
             }
         });
 
@@ -70,7 +64,7 @@ public class CookieHandler {
     }
 
     public void setCookie(HttpServletRequest request, HttpServletResponse response, CookieInfo info) {
-        String cookieValue = encode(info);
+        String cookieValue = info.toEncryptedString();
         long maxAgeMillis = info.getExpires().getTime() - new Date().getTime();
         long maxAge = (maxAgeMillis < 0) ? -1 : maxAgeMillis/1000L;
         HttpCookie cookie = new HttpCookie(LID_COOKIE_NAME)
@@ -80,20 +74,14 @@ public class CookieHandler {
         cookie.saveTo(request, response);
     }
 
-    public void removeCookie(HttpServletRequest request, HttpServletResponse response) {
+    public CookieInfo removeCookie(HttpServletRequest request, HttpServletResponse response) {
         HttpCookie cookie = new HttpCookie(LID_COOKIE_NAME);
-        cookie.removeFrom(request, response);
-    }
-
-    public static String encode(@NonNull CookieInfo info) {
-        TEA tea = new TEA(KEY128);
-        String dataString = info.toJSONString();
-        return tea.encrypt(dataString);
-    }
-
-    public static CookieInfo decode(@NonNull String encodedString) {
-        TEA tea = new TEA(KEY128);
-        String dataString = tea.decrypt(encodedString);
-        return CookieInfo.fromJSONString(dataString);
+        if (cookie == null) {
+            return null;
+        } else {
+            CookieInfo info = getCookie(request);
+            cookie.removeFrom(request, response);
+            return info;
+        }
     }
 }

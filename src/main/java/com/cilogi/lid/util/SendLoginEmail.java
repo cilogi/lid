@@ -20,7 +20,6 @@
 
 package com.cilogi.lid.util;
 
-import com.cilogi.lid.cookie.CookieHandler;
 import com.cilogi.lid.cookie.CookieInfo;
 import lombok.NonNull;
 import org.apache.commons.validator.routines.EmailValidator;
@@ -51,7 +50,7 @@ public class SendLoginEmail {
             throw new IllegalArgumentException("The email address " + emailAddress + " isn't valid");
         }
         CookieInfo info = new CookieInfo(emailAddress);
-        String token = CookieHandler.encode(info);
+        String token = info.toEncryptedString();
         String fullAddress = returnAddress + "?token=" + token;
         LOG.info("Address is " + fullAddress);
         sendEmail.send(emailAddress, "Please go the enclosed address to log in to Cilogi-Lid", "Please go to \n\n" + fullAddress);

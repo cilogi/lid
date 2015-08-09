@@ -50,6 +50,7 @@ public class FlashFilter implements Filter {
     @Override public void destroy() {}
 
     @Override
+    @SuppressWarnings({"unchecked"})
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest)request;
         HttpSession session = httpRequest.getSession(false);

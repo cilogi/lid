@@ -1,9 +1,9 @@
 package com.cilogi.lid.util;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Charsets;
-import org.apache.commons.codec.binary.Base64;
+import com.google.common.base.Preconditions;
 import lombok.NonNull;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * Implementation of the Tiny Encryption Algorithm (TEA).

@@ -3,31 +3,41 @@
 <head>
     <title>Lid Demo Home</title>
 </head>
+<style>
+    .login-form {
+        padding-bottom: 10px;
+    }
+</style>
 <body>
 <h1>Home Page</h1>
 
 <p id="loginStatus">Acquiring Login Status...</p>
 
-<div id = "loggedIn">
-    <button id="logout">Logout</button>
+<div id="loggedIn">
+    <form id="logoutForm" method="POST" action="/logout">
+        <button type="submit">Logout</button>
+    </form>
 </div>
 
 <div id="loggedOut" style="display:none">
-    <form>
+    <form  id="loginByEmail" class="login-form" method="POST" action="/login/email">
         <div>
             <label for="email">Email</label>
             <input type="text" name="email" id="email">
         </div>
         <div>
-            <button id="loginByEmail">Login by Email</button>
+            <button tpe="submit">Login by Email</button>
         </div>
+    </form>
+    <form class="login-form" method="POST" action="/login/google">
         <div>
-            <button id="googleLogin">Google Login</button>
+            <button type="submit" id="googleLogin">Google Login</button>
         </div>
+    </form>
+    <form class="login-form" method="POST" action="/login/facebook">
         <div>
             <button id="facebookLogin">Facebook Login</button>
         </div>
-
     </form>
 </div>
 <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>

@@ -1,10 +1,10 @@
-// Copyright (c) 2015 Cilogi. All Rights Reserved.
+// Copyright (c) 2012 Tim Niblett. All Rights Reserved.
 //
-// File:        GenKey.java  (08/08/15)
+// File:        Secrets.java  (23/10/12)
 // Author:      tim
 //
 // Copyright in the whole and every part of this source file belongs to
-// Cilogi (the Author) and may not be used, sold, licenced, 
+// Tim Niblett (the Author) and may not be used, sold, licenced, 
 // transferred, copied or reproduced in whole or in part in 
 // any manner or form or in or on any media to any person other than 
 // in accordance with the terms of The Author's agreement
@@ -18,28 +18,33 @@
 //
 
 
-package com.cilogi.lid.cookie;
+package com.cilogi.lid.util;
 
-import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.SecureRandom;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
+public class Secrets {
+    static final Logger LOG = LoggerFactory.getLogger(Secrets.class);
 
-public class GenKey {
-    @SuppressWarnings("unused")
-    static final Logger LOG = LoggerFactory.getLogger(GenKey.class);
+    private static final Properties props = new Properties();
 
-    public GenKey() {
-
+    static {
+        try {
+            try (InputStream is = Secrets.class.getResourceAsStream("/secret.properties")) {
+                props.load(is);
+            }
+        } catch (IOException e) {
+            LOG.error("Can't load secrets", e);
+        }
     }
 
-    public static void main(String[] args) {
-        SecureRandom rand = new SecureRandom();
-        byte[] data = new byte[16];
-        rand.nextBytes(data);
-        String s = Base64.encodeBase64String(data);
-        System.out.println(s);
+    private Secrets() {}
+
+    public static String get(String name) {
+        return props.getProperty(name);
     }
 }

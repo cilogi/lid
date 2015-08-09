@@ -1,6 +1,6 @@
 // Copyright (c) 2015 Cilogi. All Rights Reserved.
 //
-// File:        MailLoginServlet.java  (08/08/15)
+// File:        GoogleLoginReturnServlet.java  (09/08/15)
 // Author:      tim
 //
 // Copyright in the whole and every part of this source file belongs to
@@ -18,12 +18,16 @@
 //
 
 
-package com.cilogi.lid.servlet;
+package com.cilogi.lid.servlet.login;
 
 import com.cilogi.lid.cookie.CookieHandler;
 import com.cilogi.lid.cookie.CookieInfo;
+import com.cilogi.lid.guice.annotations.CookieExpireDays;
+import com.cilogi.lid.servlet.BaseServlet;
+import com.cilogi.lid.cookie.Site;
 import com.cilogi.lid.user.LidUser;
-import com.google.common.net.MediaType;
+import com.google.appengine.api.users.User;
+import com.google.appengine.api.users.UserServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,40 +37,34 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
-public class MailReplyServlet extends BaseServlet {
+public class GoogleLoginReturnServlet extends BaseServlet {
     @SuppressWarnings("unused")
-    static final Logger LOG = LoggerFactory.getLogger(MailReplyServlet.class);
+    static final Logger LOG = LoggerFactory.getLogger(GoogleLoginReturnServlet.class);
 
     private static final String REDIRECT_ON_SUCCESS = "/index.html";
 
+    private final long cookieExpireDays;
+
     @Inject
-    public MailReplyServlet() {}
+    public GoogleLoginReturnServlet(@CookieExpireDays long cookieExpireDays) {
+        this.cookieExpireDays = cookieExpireDays;
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String token = request.getParameter("token");
-        if (token == null) {
-            issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_BAD_REQUEST, "No token", response);
-        } else {
-            CookieInfo info = null;
-            try {
-                info = CookieHandler.decode(token);
-            } catch (RuntimeException e) {
-                issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_BAD_REQUEST,
-                        "Can't parse token: " + e.getMessage(), response);
-            }
-            try {
-                CookieHandler handler = new CookieHandler();
-                handler.setCookie(request, response, info);
-                LidUser.setCurrentUser(info.getEmail());
-                response.sendRedirect(REDIRECT_ON_SUCCESS);
-            } catch (Exception e) {
-                issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                        "Can't set user: " + e.getMessage(), response);
-            }
+        User user = UserServiceFactory.getUserService().getCurrentUser();
+        if (user != null) {
+            String email = user.getEmail();
+            CookieInfo info = new CookieInfo(email)
+                    .setSite(Site.google)
+                    .expire(cookieExpireDays, TimeUnit.DAYS);
+            CookieHandler handler = new CookieHandler();
+            handler.setCookie(request, response, info);
+            LidUser.setCurrentUser(email);
+            response.sendRedirect(REDIRECT_ON_SUCCESS);
         }
     }
-
 }
