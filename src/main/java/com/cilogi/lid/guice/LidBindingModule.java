@@ -31,14 +31,17 @@ import freemarker.ext.servlet.FreemarkerServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Properties;
 
 
-public class BindingModule extends AbstractModule {
+public class LidBindingModule extends AbstractModule {
     @SuppressWarnings({"unused"})
-    static final Logger LOG = LoggerFactory.getLogger(BindingModule.class);
+    static final Logger LOG = LoggerFactory.getLogger(LidBindingModule.class);
 
+    private final Properties lidProperties;
 
-    public BindingModule() {
+    public LidBindingModule(Properties lidProperties) {
+        this.lidProperties = lidProperties;
      }
 
     @Override
@@ -48,17 +51,28 @@ public class BindingModule extends AbstractModule {
 
         bind(Boolean.class).annotatedWith(Development.class).toInstance(isDevelopmentServer());
 
-        bind(Long.class).annotatedWith(CookieExpireDays.class).toInstance(30L);
-
-        bind(String.class).annotatedWith(DefaultRedirect.class).toInstance("/index.html"); // must not require auth
+        bind(Long.class).annotatedWith(CookieExpireDays.class).toInstance(longProp("cookie.expireDays"));
+        bind(String.class).annotatedWith(DefaultRedirect.class).toInstance(prop("default.redirect")); // must not require auth
         bind(String.class).annotatedWith(EmailReturn.class)
-                .toInstance(isDevelopmentServer() ? "http://localhost:8080/mailLogin" : "https://cilogi-lid.appspot.com/mailLogin");
+                .toInstance(isDevelopmentServer()
+                        ? prop("email.return.local") + prop("email.loginReturn")
+                        : prop("email.return.remote") + prop("email.loginReturn"));
         bind(String.class).annotatedWith(AuthRedirect.class)
-                .toInstance("authRedirect");
+                .toInstance(prop("auth.redirect.default"));
     }
 
     private static boolean isDevelopmentServer() {
         SystemProperty.Environment.Value server = SystemProperty.environment.value();
         return server == SystemProperty.Environment.Value.Development;
+    }
+
+
+    private String prop(String s) {
+        return lidProperties.getProperty(s);
+    }
+
+    private long longProp(String s) {
+        String val = prop(s);
+        return Long.parseLong(val);
     }
 }

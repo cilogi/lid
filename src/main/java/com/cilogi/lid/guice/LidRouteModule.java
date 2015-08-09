@@ -33,13 +33,17 @@ import freemarker.ext.servlet.FreemarkerServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Properties;
 
-public class RouteModule extends ServletModule {
+
+public class LidRouteModule extends ServletModule {
     @SuppressWarnings({"unused"})
-    static final Logger LOG = LoggerFactory.getLogger(RouteModule.class.getName());
+    static final Logger LOG = LoggerFactory.getLogger(LidRouteModule.class.getName());
 
-    public RouteModule() {
+    private final Properties lidProperties;
 
+    public LidRouteModule(Properties lidProperties) {
+        this.lidProperties = lidProperties;
     }
 
     @Override
@@ -49,16 +53,24 @@ public class RouteModule extends ServletModule {
 
         serve("/_ah/sessioncleanup").with(SessionCleanupServlet.class);
 
-        serve("/mailLogin").with(EmailLoginReturn.class);
-        serve("/login/email").with(EmailLoginServlet.class);
-        serve("/login/google").with(GoogleLoginServlet.class);
-        serve("/login/facebook").with(FacebookLoginServlet.class);
-        serve("/login/googleReturn").with(GoogleLoginReturnServlet.class);
-        serve("/logout").with(LogoutServlet.class);
-        serve("/user/status").with(StatusServlet.class);
+        serve(prop("email.login")).with(EmailLoginServlet.class);
+        serve(prop("email.loginReturn")).with(EmailLoginReturn.class);
+
+        serve(prop("google.login")).with(GoogleLoginServlet.class);
+        serve(prop("google.loginReturn")).with(GoogleLoginReturnServlet.class);
+
+        serve(prop("facebook.login")).with(FacebookLoginServlet.class);
+
+        serve(prop("logout")).with(LogoutServlet.class);
+
+        serve(prop("user.status")).with(StatusServlet.class);
 
         serve("*.ftl").with(FreemarkerServlet.class, ImmutableMap.of(
             "TemplatePath", "classpath:ftl"
         ));
+    }
+
+    private String prop(String s) {
+        return lidProperties.getProperty(s);
     }
 }

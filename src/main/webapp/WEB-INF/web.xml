@@ -53,7 +53,7 @@
     </filter-mapping>
 
     <listener>
-        <listener-class>com.cilogi.lid.guice.ServeContextListener</listener-class>
+        <listener-class>com.cilogi.lid.guice.LidServeContextListener</listener-class>
     </listener>
 
     <welcome-file-list>

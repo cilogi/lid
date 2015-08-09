@@ -20,24 +20,53 @@
 
 package com.cilogi.lid.guice;
 
+import com.cilogi.lid.util.Secrets;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
-public class ServeContextListener extends GuiceServletContextListener {
+
+public class LidServeContextListener extends GuiceServletContextListener {
     @SuppressWarnings({"unused"})
-    static final Logger LOG = LoggerFactory.getLogger(ServeContextListener.class);
+    static final Logger LOG = LoggerFactory.getLogger(LidServeContextListener.class);
 
-    public ServeContextListener() {}
+    @Getter
+    protected Properties lidProperties = new Properties();
+
+    public LidServeContextListener() {
+        init(getResourceLocation());
+    }
+
+    protected void init(String resourceLocation) {
+        try {
+            try (InputStream is = getClass().getResourceAsStream(resourceLocation)) {
+                lidProperties.load(is);
+            }
+            Secrets.init(lidProperties.getProperty("secret.properties"));
+        } catch (IOException e) {
+            LOG.error("Can't load secrets", e);
+            throw new RuntimeException("Initialization of /lid.properties failed");
+        }
+    }
+
+    /** Override this to change the location of the setup properties */
+    protected String getResourceLocation() {
+        return "/lid.properties";
+    }
+
 
     @Override
     protected Injector getInjector() {
         return Guice.createInjector(
                 // order is essential here, as the objectify filter must come before others,
                 // in order to set up the objectify context
-                new BindingModule(), new RouteModule());
+                new LidBindingModule(getLidProperties()), new LidRouteModule(getLidProperties()));
     }
 }

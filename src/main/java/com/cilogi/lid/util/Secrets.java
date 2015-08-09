@@ -32,9 +32,9 @@ public class Secrets {
 
     private static final Properties props = new Properties();
 
-    static {
+    public static void init(String resource) {
         try {
-            try (InputStream is = Secrets.class.getResourceAsStream("/secret.properties")) {
+            try (InputStream is = Secrets.class.getResourceAsStream(resource)) {
                 props.load(is);
             }
         } catch (IOException e) {
