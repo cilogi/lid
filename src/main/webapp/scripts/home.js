@@ -16,7 +16,8 @@
                     $("#loggedIn").show();
                     $("#loggedOut").hide();
                 } else {
-                    $("#loggedIn").show().html("<p>You are not logged in</p>");
+                    $("#loginStatus").show().html("<p>You are not logged in</p>");
+                    $("#loggedIn").hide();
                     $("#loggedOut").show();
                 }
             },

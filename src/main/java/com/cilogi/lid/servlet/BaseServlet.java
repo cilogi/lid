@@ -31,6 +31,7 @@ import lombok.NonNull;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -61,6 +62,24 @@ public class BaseServlet extends HttpServlet {
     @SuppressWarnings({"unused"})
     protected String getCurrentUserName() {
         return LidUser.getCurrentUser();
+    }
+
+    protected void putSession(@NonNull String key, @NonNull String value, @NonNull HttpServletRequest request) {
+        HttpSession session = request.getSession(true);
+        session.setAttribute(key, value);
+    }
+
+    protected String getAndDeleteSession(@NonNull String key, @NonNull HttpServletRequest request, String deflt) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return deflt;
+        } else {
+            String value = (String)session.getAttribute(key);
+            if (value != null) {
+                session.removeAttribute(key);
+            }
+            return value;
+        }
     }
 
     static Map<String,Object> args2map(@NonNull Object... args) {
