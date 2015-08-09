@@ -60,7 +60,7 @@ public class EmailLoginServlet extends BaseServlet {
                 issueJson(response, HttpServletResponse.SC_BAD_REQUEST, "message", "Email address " + email + " is invalid");
             } else {
                 sendLoginEmail.send(email, redirectURL);
-                issueJson(response, HttpServletResponse.SC_OK, "message", "Email sent to " + email);
+                issueJson(response, HttpServletResponse.SC_OK, "message", "Email sent to " + email + ", please click link in Email to log in");
             }
         }
     }
