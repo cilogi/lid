@@ -21,6 +21,7 @@
 package com.cilogi.lid.servlet.login;
 
 import com.cilogi.lid.guice.annotations.AuthRedirect;
+import com.cilogi.lid.guice.annotations.DefaultRedirect;
 import com.cilogi.lid.servlet.BaseServlet;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.net.MediaType;
@@ -40,19 +41,20 @@ public class GoogleLoginServlet extends BaseServlet {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(GoogleLoginServlet.class);
 
-    private static final String DEFAULT_REDIRECT = "/index.html";
     private static final long serialVersionUID = -3344803219460057213L;
 
     private final String authRedirect;
+    private final String defaultRedirect;
 
     @Inject
-    public GoogleLoginServlet(@AuthRedirect String authRedirect) {
+    public GoogleLoginServlet(@AuthRedirect String authRedirect, @DefaultRedirect String defaultRedirect) {
         this.authRedirect = authRedirect;
+        this.defaultRedirect = defaultRedirect;
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String redirectURL = getAndDeleteSession(authRedirect, request, DEFAULT_REDIRECT);
+        String redirectURL = getAndDeleteSession(authRedirect, request, defaultRedirect);
         try {
             String url = UserServiceFactory.getUserService().createLoginURL("/login/googleReturn?redirect=" + URLEncoder.encode(redirectURL, "UTF-8"));
             response.sendRedirect(url);

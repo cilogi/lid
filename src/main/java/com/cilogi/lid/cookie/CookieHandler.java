@@ -76,12 +76,8 @@ public class CookieHandler {
 
     public CookieInfo removeCookie(HttpServletRequest request, HttpServletResponse response) {
         HttpCookie cookie = new HttpCookie(LID_COOKIE_NAME);
-        if (cookie == null) {
-            return null;
-        } else {
-            CookieInfo info = getCookie(request);
-            cookie.removeFrom(request, response);
-            return info;
-        }
+        CookieInfo info = getCookie(request);
+        cookie.removeFrom(request, response);
+        return info;
     }
 }

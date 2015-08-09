@@ -23,6 +23,7 @@ package com.cilogi.lid.servlet.login;
 import com.cilogi.lid.cookie.CookieHandler;
 import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.guice.annotations.CookieExpireDays;
+import com.cilogi.lid.guice.annotations.DefaultRedirect;
 import com.cilogi.lid.servlet.BaseServlet;
 import com.cilogi.lid.cookie.Site;
 import com.cilogi.lid.user.LidUser;
@@ -43,14 +44,15 @@ public class EmailLoginReturn extends BaseServlet {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(EmailLoginReturn.class);
 
-    private static final String REDIRECT_ON_SUCCESS = "/index.html";
     private static final long serialVersionUID = 1650249303865008594L;
 
     private final long cookieExpireDays;
+    private final String defaultRedirect;
 
     @Inject
-    public EmailLoginReturn(@CookieExpireDays long cookieExpireDays) {
+    public EmailLoginReturn(@CookieExpireDays long cookieExpireDays, @DefaultRedirect String defaultRedirect) {
         this.cookieExpireDays = cookieExpireDays;
+        this.defaultRedirect = defaultRedirect;
     }
 
     @Override
@@ -72,13 +74,18 @@ public class EmailLoginReturn extends BaseServlet {
             }
             try {
                 // create a new cookie so we get a different SALT to go with the different date
-                CookieInfo newInfo = new CookieInfo(info.getEmail())
-                        .setSite(Site.email)
-                        .expire(cookieExpireDays, TimeUnit.DAYS);
-                CookieHandler handler = new CookieHandler();
-                handler.setCookie(request, response, newInfo);
-                LidUser.setCurrentUser(newInfo.getEmail());
-                response.sendRedirect(redirectURL(info));
+                if (info == null || info.getEmail() == null) {
+                    issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                            "The info is missing or corrupt: " + info, response);
+                } else {
+                    CookieInfo newInfo = new CookieInfo(info.getEmail())
+                            .setSite(Site.email)
+                            .expire(cookieExpireDays, TimeUnit.DAYS);
+                    CookieHandler handler = new CookieHandler();
+                    handler.setCookie(request, response, newInfo);
+                    LidUser.setCurrentUser(newInfo.getEmail());
+                    response.sendRedirect(redirectURL(info));
+                }
             } catch (Exception e) {
                 issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                         "Can't set user: " + e.getMessage(), response);
@@ -87,7 +94,7 @@ public class EmailLoginReturn extends BaseServlet {
     }
 
     private String redirectURL(CookieInfo info) {
-        return (info == null || info.getRedirect() == null) ? REDIRECT_ON_SUCCESS : info.getRedirect();
+        return (info == null || info.getRedirect() == null) ? defaultRedirect : info.getRedirect();
     }
 
 }

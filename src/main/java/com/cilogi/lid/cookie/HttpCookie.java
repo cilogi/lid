@@ -3,7 +3,7 @@
 // File:        SimpleCookie.java  (08/08/15)
 // Author:      tim
 //
-// Adapted from Apache Shiro
+// Adapted from Apache Shiro, with thanks
 //
 
 

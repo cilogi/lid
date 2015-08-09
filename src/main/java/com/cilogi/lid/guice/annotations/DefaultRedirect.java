@@ -1,6 +1,6 @@
 // Copyright (c) 2015 Cilogi. All Rights Reserved.
 //
-// File:        OAuthInfo.java  (09/08/15)
+// File:        DefaultRedirect.java  (09/08/15)
 // Author:      tim
 //
 // Copyright in the whole and every part of this source file belongs to
@@ -18,29 +18,20 @@
 //
 
 
-package com.cilogi.lid.servlet.login;
+package com.cilogi.lid.guice.annotations;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
-import lombok.experimental.Accessors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.inject.BindingAnnotation;
 
-@Data
-@Accessors(fluent=false,chain=true)
-class OAuthInfo {
-    @SuppressWarnings("unused")
-    static final Logger LOG = LoggerFactory.getLogger(OAuthInfo.class);
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    private String token;
-    private String email;
-    private String errorString;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 
-    OAuthInfo() {}
-
-    @JsonIgnore
-    public boolean isError() {
-        return errorString != null;
-    }
-
+@BindingAnnotation
+@Retention(RetentionPolicy.RUNTIME)
+@Target( { FIELD, PARAMETER, METHOD })
+public @interface DefaultRedirect {
 }

@@ -35,7 +35,7 @@ import java.io.IOException;
 /**
  * Set the user if we can work it out from the cookie in the request.
  * This relies on AppEngine _not_ allowing threads to be created so setting
- * the user in a <code>ThreadLocal</code> guarantees we can access the user from
+ * the user in a <code>ThreadLocal</code> in LidUser guarantees we can access the user from
  * anywhere in the code later on.
  * <p>Make this filter appear before any that do authorization, this is just
  *  for authentication.</p>

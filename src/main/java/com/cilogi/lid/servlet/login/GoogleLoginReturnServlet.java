@@ -23,6 +23,7 @@ package com.cilogi.lid.servlet.login;
 import com.cilogi.lid.cookie.CookieHandler;
 import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.guice.annotations.CookieExpireDays;
+import com.cilogi.lid.guice.annotations.DefaultRedirect;
 import com.cilogi.lid.servlet.BaseServlet;
 import com.cilogi.lid.cookie.Site;
 import com.cilogi.lid.user.LidUser;
@@ -44,20 +45,21 @@ public class GoogleLoginReturnServlet extends BaseServlet {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(GoogleLoginReturnServlet.class);
 
-    private static final String DEFAULT_REDIRECT = "/index.html"; // must not require auth
     private static final long serialVersionUID = 4695841156936686023L;
 
     private final long cookieExpireDays;
+    private final String defaultRedirect;
 
     @Inject
-    public GoogleLoginReturnServlet(@CookieExpireDays long cookieExpireDays) {
-        this.cookieExpireDays = cookieExpireDays;;
+    public GoogleLoginReturnServlet(@CookieExpireDays long cookieExpireDays, @DefaultRedirect String defaultRedirect) {
+        this.cookieExpireDays = cookieExpireDays;
+        this.defaultRedirect = defaultRedirect;
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User user = UserServiceFactory.getUserService().getCurrentUser();
-        String redirectURL = stringParameter("redirect", request, DEFAULT_REDIRECT);;
+        String redirectURL = stringParameter("redirect", request, defaultRedirect);
         if (user != null) {
             String email = user.getEmail();
             CookieInfo info = new CookieInfo(email)
@@ -68,7 +70,7 @@ public class GoogleLoginReturnServlet extends BaseServlet {
             LidUser.setCurrentUser(email);
             response.sendRedirect(redirectURL);
         } else {
-            response.sendRedirect(DEFAULT_REDIRECT);
+            response.sendRedirect(defaultRedirect);
         }
     }
 }

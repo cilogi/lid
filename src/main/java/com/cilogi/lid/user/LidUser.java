@@ -26,7 +26,12 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings({"unused"})
+/**
+ * This class, and the auth filter where its set only work because AppEngine
+ * front ends dont allow you to create threads.  I'm not sure how well it would
+ * do in a general-purpose setting.  You'd probably need to store the information
+ * in the session and make this method session-scoped (only from servlets).
+ */
 public class LidUser {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(LidUser.class);

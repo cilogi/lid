@@ -74,8 +74,7 @@ public class TEA {
 
     public String encrypt(@NonNull String clear) {
         byte[] clearBytes = clear.getBytes(Charsets.UTF_8);
-        String crypt = Base64.encodeBase64URLSafeString(encrypt(clearBytes));
-        return crypt;
+        return Base64.encodeBase64URLSafeString(encrypt(clearBytes));
     }
 
     /**
@@ -95,8 +94,7 @@ public class TEA {
 
     public String decrypt(@NonNull String crypt) {
         byte[] cryptBytes = Base64.decodeBase64(crypt);
-        String clear = new String(decrypt(cryptBytes), Charsets.UTF_8);
-        return clear;
+        return new String(decrypt(cryptBytes), Charsets.UTF_8);
     }
 
 

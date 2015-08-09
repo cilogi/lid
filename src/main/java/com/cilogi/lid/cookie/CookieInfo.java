@@ -97,7 +97,7 @@ public class CookieInfo implements Serializable {
 
     @JsonIgnore
     public boolean isExpired() {
-        return (expires == null) ? true : expires.getTime() < new Date().getTime();
+        return (expires == null) || expires.getTime() < new Date().getTime();
     }
 
     public CookieInfo expire(long amount, @NonNull TimeUnit unit) {
