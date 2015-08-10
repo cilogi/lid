@@ -43,7 +43,7 @@ public class TestCookieInfo {
 
     @Before
     public void setUp() {
-
+        Secrets.init("/secret.properties");
     }
 
     @Test

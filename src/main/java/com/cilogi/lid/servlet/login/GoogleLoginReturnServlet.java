@@ -22,10 +22,10 @@ package com.cilogi.lid.servlet.login;
 
 import com.cilogi.lid.cookie.CookieHandler;
 import com.cilogi.lid.cookie.CookieInfo;
+import com.cilogi.lid.cookie.Site;
 import com.cilogi.lid.guice.annotations.CookieExpireDays;
 import com.cilogi.lid.guice.annotations.DefaultRedirect;
 import com.cilogi.lid.servlet.BaseServlet;
-import com.cilogi.lid.cookie.Site;
 import com.cilogi.lid.user.LidUser;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserServiceFactory;

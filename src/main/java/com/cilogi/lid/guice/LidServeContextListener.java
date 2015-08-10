@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-
+@SuppressWarnings({"unused"})
 public class LidServeContextListener extends GuiceServletContextListener {
     @SuppressWarnings({"unused"})
     static final Logger LOG = LoggerFactory.getLogger(LidServeContextListener.class);

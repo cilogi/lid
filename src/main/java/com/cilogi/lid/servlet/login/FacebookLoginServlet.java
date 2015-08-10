@@ -30,7 +30,7 @@ import com.cilogi.lid.guice.annotations.Development;
 import com.cilogi.lid.servlet.BaseServlet;
 import com.cilogi.lid.user.LidUser;
 import com.cilogi.lid.util.Secrets;
-import com.google.api.client.repackaged.com.google.common.base.Preconditions;
+import com.google.common.base.Preconditions;
 import com.google.common.net.MediaType;
 import lombok.NonNull;
 import org.json.JSONException;

@@ -23,13 +23,10 @@ package com.cilogi.lid.guice;
 
 import com.cilogi.lid.filter.AuthFilter;
 import com.cilogi.lid.filter.UserFilter;
-import com.cilogi.lid.servlet.login.*;
 import com.cilogi.lid.servlet.LogoutServlet;
 import com.cilogi.lid.servlet.StatusServlet;
-import com.google.apphosting.utils.servlet.SessionCleanupServlet;
-import com.google.common.collect.ImmutableMap;
+import com.cilogi.lid.servlet.login.*;
 import com.google.inject.servlet.ServletModule;
-import freemarker.ext.servlet.FreemarkerServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +48,6 @@ public class LidRouteModule extends ServletModule {
         filter("/*").through(UserFilter.class);
         filter("/*").through(AuthFilter.class);
 
-        serve("/_ah/sessioncleanup").with(SessionCleanupServlet.class);
 
         serve(prop("email.login")).with(EmailLoginServlet.class);
         serve(prop("email.loginReturn")).with(EmailLoginReturn.class);
@@ -64,10 +60,6 @@ public class LidRouteModule extends ServletModule {
         serve(prop("logout")).with(LogoutServlet.class);
 
         serve(prop("user.status")).with(StatusServlet.class);
-
-        serve("*.ftl").with(FreemarkerServlet.class, ImmutableMap.of(
-            "TemplatePath", "classpath:ftl"
-        ));
     }
 
     private String prop(String s) {

@@ -24,10 +24,7 @@ package com.cilogi.lid.guice;
 
 import com.cilogi.lid.guice.annotations.*;
 import com.google.appengine.api.utils.SystemProperty;
-import com.google.apphosting.utils.servlet.SessionCleanupServlet;
 import com.google.inject.AbstractModule;
-import com.google.inject.Scopes;
-import freemarker.ext.servlet.FreemarkerServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,9 +43,6 @@ public class LidBindingModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(FreemarkerServlet.class).in(Scopes.SINGLETON);
-        bind(SessionCleanupServlet.class).in(Scopes.SINGLETON);
-
         bind(Boolean.class).annotatedWith(Development.class).toInstance(isDevelopmentServer());
 
         bind(Long.class).annotatedWith(CookieExpireDays.class).toInstance(longProp("cookie.expireDays"));

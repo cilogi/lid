@@ -24,7 +24,7 @@ package com.cilogi.lid.servlet;
 import com.cilogi.lid.user.LidUser;
 import com.cilogi.lid.util.session.SessionAttributes;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.appengine.labs.repackaged.com.google.common.collect.Maps;
+import com.google.common.collect.Maps;
 import com.google.common.base.Preconditions;
 import com.google.common.net.MediaType;
 import lombok.NonNull;
@@ -75,7 +75,7 @@ public class BaseServlet extends HttpServlet {
 
     static Map<String,Object> args2map(@NonNull Object... args) {
         Preconditions.checkArgument(args.length % 2 == 0, "There must be an even number of arguments");
-        Map<String,Object> map = Maps.newLinkedHashMapWithExpectedSize(args.length/2); // linked map for testing consistency
+        Map<String,Object> map = Maps.newLinkedHashMap(); // linked map for testing consistency
         for (int i = 0; i < args.length; i += 2) {
             map.put(args[i].toString(), args[i+1]);
         }
