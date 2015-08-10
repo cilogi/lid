@@ -53,6 +53,7 @@ public class LidBindingModule extends AbstractModule {
                         : prop("email.return.remote") + prop("email.loginReturn"));
         bind(String.class).annotatedWith(AuthRedirect.class)
                 .toInstance(prop("auth.redirect.default"));
+        bind(String.class).annotatedWith(EmailFromAddress.class).toInstance(prop("email.from"));
     }
 
     private static boolean isDevelopmentServer() {
