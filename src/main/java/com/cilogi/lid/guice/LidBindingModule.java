@@ -23,6 +23,8 @@ package com.cilogi.lid.guice;
 
 
 import com.cilogi.lid.guice.annotations.*;
+import com.cilogi.lid.util.ISendEmail;
+import com.cilogi.lid.util.SendLoginEmail;
 import com.google.appengine.api.utils.SystemProperty;
 import com.google.inject.AbstractModule;
 import org.slf4j.Logger;
@@ -44,7 +46,6 @@ public class LidBindingModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(Boolean.class).annotatedWith(Development.class).toInstance(isDevelopmentServer());
-
         bind(Long.class).annotatedWith(CookieExpireDays.class).toInstance(longProp("cookie.expireDays"));
         bind(String.class).annotatedWith(DefaultRedirect.class).toInstance(prop("default.redirect")); // must not require auth
         bind(String.class).annotatedWith(EmailReturnURL.class)
@@ -54,6 +55,8 @@ public class LidBindingModule extends AbstractModule {
         bind(String.class).annotatedWith(AuthRedirect.class)
                 .toInstance(prop("auth.redirect.default"));
         bind(String.class).annotatedWith(EmailFromAddress.class).toInstance(prop("email.from"));
+        bind(String.class).annotatedWith(EmailTemplate.class).toInstance(prop("email.template"));
+        bind(ISendEmail.class).to(SendLoginEmail.class);
     }
 
     private static boolean isDevelopmentServer() {

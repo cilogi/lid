@@ -23,32 +23,47 @@ package com.cilogi.lid.util;
 import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.guice.annotations.EmailFromAddress;
 import com.cilogi.lid.guice.annotations.EmailReturnURL;
+import com.cilogi.lid.guice.annotations.EmailTemplate;
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheFactory;
+import com.google.common.collect.ImmutableMap;
 import lombok.NonNull;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.Map;
 
 /**
  * Send a login email to a named user
  */
-public class SendLoginEmail {
+public class SendLoginEmail implements ISendEmail {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(SendLoginEmail.class);
 
     private final String returnAddress;
     private final SendEmail sendEmail;
     private final String fromAddress;
+    private final String emailTemplate;
 
     @Inject
-    public SendLoginEmail(@EmailFromAddress String fromAddress, @EmailReturnURL String returnAddress) {
+    public SendLoginEmail(@EmailFromAddress String fromAddress,
+                          @EmailReturnURL String returnAddress,
+                          @EmailTemplate String emailTemplate) {
         this.fromAddress = fromAddress;
         this.returnAddress = returnAddress;
+        this.emailTemplate = emailTemplate;
         this.sendEmail = new SendEmail(fromAddress);
     }
 
-    public void send(@NonNull String emailAddress, String redirectURL) {
+    @Override
+    public void send(@NonNull String emailAddress, String redirectURL) throws IOException {
         if (!isLegalEmail(emailAddress)) {
             throw new IllegalArgumentException("The email address " + emailAddress + " isn't valid");
         }
@@ -56,7 +71,8 @@ public class SendLoginEmail {
         String token = info.toEncryptedString();
         String fullAddress = returnAddress + "?token=" + token;
         LOG.info("Email from " + fromAddress + " to " + emailAddress + " URL is " + fullAddress);
-        sendEmail.send(emailAddress, "Please go the enclosed address to log in to cilogi-liddemo", "Please go to \n\n" + fullAddress);
+        String htmlBody = htmlBody(ImmutableMap.of("from", fromAddress, "to", emailAddress, "fullAddress", fullAddress));
+        sendEmail.send(emailAddress, "Please go the enclosed address to log in to cilogi-liddemo", htmlBody);
     }
 
 
@@ -66,5 +82,14 @@ public class SendLoginEmail {
         }
         EmailValidator validator = EmailValidator.getInstance();
         return validator.isValid(emailAddress);
+    }
+
+    protected String htmlBody(Map<String,String> map) throws IOException {
+        MustacheFactory mf = new DefaultMustacheFactory();
+        StringReader sr = new StringReader(IOUtils.toString(getClass().getResourceAsStream(emailTemplate)));
+        Mustache mustache = mf.compile(sr, "test");
+        StringWriter sw = new StringWriter();
+        mustache.execute(sw, map);
+        return sw.toString();
     }
 }

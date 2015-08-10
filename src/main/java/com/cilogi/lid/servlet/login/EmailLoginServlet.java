@@ -22,6 +22,7 @@ package com.cilogi.lid.servlet.login;
 
 import com.cilogi.lid.guice.annotations.AuthRedirect;
 import com.cilogi.lid.servlet.BaseServlet;
+import com.cilogi.lid.util.ISendEmail;
 import com.cilogi.lid.util.SendLoginEmail;
 import com.cilogi.lid.util.session.SessionAttributes;
 import org.slf4j.Logger;
@@ -40,11 +41,11 @@ public class EmailLoginServlet extends BaseServlet {
     static final Logger LOG = LoggerFactory.getLogger(EmailLoginServlet.class);
     private static final long serialVersionUID = -7329056757135899836L;
 
-    private final SendLoginEmail sendLoginEmail;
+    private final ISendEmail sendLoginEmail;
     private final String authRedirect;
 
     @Inject
-    public EmailLoginServlet(SendLoginEmail sendLoginEmail, @AuthRedirect String authRedirect) {
+    public EmailLoginServlet(ISendEmail sendLoginEmail, @AuthRedirect String authRedirect) {
         this.sendLoginEmail = sendLoginEmail;
         this.authRedirect = authRedirect;
     }
@@ -59,8 +60,12 @@ public class EmailLoginServlet extends BaseServlet {
             if (!sendLoginEmail.isLegalEmail(email)) {
                 issueJson(response, HttpServletResponse.SC_BAD_REQUEST, "message", "Email address " + email + " is invalid");
             } else {
-                sendLoginEmail.send(email, redirectURL);
-                issueJson(response, HttpServletResponse.SC_OK, "message", "Email sent to " + email + ", please click link in Email to log in");
+                try {
+                    sendLoginEmail.send(email, redirectURL);
+                    issueJson(response, HttpServletResponse.SC_OK, "message", "Email sent to " + email + ", please click link in Email to log in");
+                } catch (Exception emailEx) {
+                    issueJson(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "message", "Internal error: " + emailEx.getMessage());
+                }
             }
         }
     }
