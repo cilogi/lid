@@ -1,5 +1,6 @@
 package com.cilogi.lid.util;
 
+import com.cilogi.lid.guice.annotations.EmailFromAddress;
 import com.google.appengine.api.mail.MailService;
 import com.google.appengine.api.mail.MailServiceFactory;
 
@@ -16,7 +17,7 @@ public class SendEmail {
     private final String fromAddress;
 
     @Inject
-    public SendEmail(@Named("email.from") String fromAddress) {
+    public SendEmail(@EmailFromAddress String fromAddress) {
         this.fromAddress = fromAddress;
     }
 
@@ -29,9 +30,9 @@ public class SendEmail {
         message.setHtmlBody(htmlMessage);
         try {
             service.send(message);
-            LOG.info("message has been sent to " + toAddress);
+            LOG.info("message has been sent from " + fromAddress + " to " + toAddress);
         } catch (IOException e) {
-            LOG.warning("Can't send email to " + toAddress + " about " + title + ": " + e.getMessage());
+            LOG.warning("Can't send email from " + fromAddress + " to " + toAddress + " about " + title + ": " + e.getMessage());
         }
     }
 }

@@ -21,7 +21,8 @@
 package com.cilogi.lid.util;
 
 import com.cilogi.lid.cookie.CookieInfo;
-import com.cilogi.lid.guice.annotations.EmailReturn;
+import com.cilogi.lid.guice.annotations.EmailFromAddress;
+import com.cilogi.lid.guice.annotations.EmailReturnURL;
 import lombok.NonNull;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
@@ -38,11 +39,13 @@ public class SendLoginEmail {
 
     private final String returnAddress;
     private final SendEmail sendEmail;
+    private final String fromAddress;
 
     @Inject
-    public SendLoginEmail(@EmailReturn String returnAddress) {
+    public SendLoginEmail(@EmailFromAddress String fromAddress, @EmailReturnURL String returnAddress) {
+        this.fromAddress = fromAddress;
         this.returnAddress = returnAddress;
-        this.sendEmail = new SendEmail("noreply@cilogi-lid.appspot.com");
+        this.sendEmail = new SendEmail(fromAddress);
     }
 
     public void send(@NonNull String emailAddress, String redirectURL) {
@@ -52,8 +55,8 @@ public class SendLoginEmail {
         CookieInfo info = new CookieInfo(emailAddress).setRedirect(redirectURL);
         String token = info.toEncryptedString();
         String fullAddress = returnAddress + "?token=" + token;
-        LOG.info("Address is " + fullAddress);
-        sendEmail.send(emailAddress, "Please go the enclosed address to log in to Cilogi-Lid", "Please go to \n\n" + fullAddress);
+        LOG.info("Email from " + fromAddress + " to " + emailAddress + " URL is " + fullAddress);
+        sendEmail.send(emailAddress, "Please go the enclosed address to log in to cilogi-liddemo", "Please go to \n\n" + fullAddress);
     }
 
 

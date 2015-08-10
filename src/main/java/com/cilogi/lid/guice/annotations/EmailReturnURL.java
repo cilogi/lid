@@ -31,5 +31,5 @@ import static java.lang.annotation.ElementType.*;
 @BindingAnnotation
 @Retention(RetentionPolicy.RUNTIME)
 @Target( { FIELD, PARAMETER, METHOD })
-public @interface EmailReturn {
+public @interface EmailReturnURL {
 }
