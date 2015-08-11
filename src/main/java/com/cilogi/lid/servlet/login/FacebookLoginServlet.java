@@ -135,7 +135,7 @@ public class FacebookLoginServlet extends BaseServlet {
                 .apiKey(apiKey)
                 .apiSecret(apiSecret)
                 .callback(host + redirectURL)
-                .scope("id")
+                .scope("email")
                 .build();
         return service.getAuthorizationUrl(null);
     }
@@ -147,7 +147,7 @@ public class FacebookLoginServlet extends BaseServlet {
         return new OAuthInfo()
                 .setErrorString(errorString(obj))
                 .setId(obj.optString("id"))
-                .setName(obj.optString("id", obj.optString("name"))) // id can be null, name less likely to be
+                .setName(obj.optString("name", obj.optString("id"))) // name can be null, id wont be
                 .setToken(obj.optString("access_token"));
     }
 
@@ -157,12 +157,12 @@ public class FacebookLoginServlet extends BaseServlet {
                 .apiKey(apiKey)
                 .apiSecret(apiSecret)
                 .callback(host + callBackUrl)
-                .scope("id")
+                .scope("email")
                 .build();
         Verifier verifier = new Verifier(code);
         Token accessToken = service.getAccessToken(NULL_TOKEN, verifier);
         OAuthRequest request = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE_URL);
-        request.addOAuthParameter("scope", "id");
+        request.addOAuthParameter("scope", "email");
         service.signRequest(accessToken, request);
         Response response = request.send();
         LOG.info("response body is " + response.getBody());

@@ -45,10 +45,12 @@ public class StatusServlet extends BaseServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String user = LidUser.userID();
+        String id = LidUser.userID();
+        String name = LidUser.userName();
         Site site = LidUser.site();
         issueJson(response, HttpServletResponse.SC_OK,
-                "user", (user == null) ? "" : user,
+                "id", (id == null) ? "" : id,
+                "name", (name == null) ? "" : name,
                 "site", (site == null) ? "" : site.name());
     }
 

@@ -24,20 +24,14 @@ import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.guice.annotations.EmailFromAddress;
 import com.cilogi.lid.guice.annotations.EmailReturnURL;
 import com.cilogi.lid.guice.annotations.EmailTemplate;
-import com.github.mustachejava.DefaultMustacheFactory;
-import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheFactory;
 import com.google.common.collect.ImmutableMap;
 import lombok.NonNull;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Map;
 
 /**
@@ -85,11 +79,6 @@ public class SendLoginEmail implements ISendEmail {
     }
 
     protected String htmlBody(Map<String,String> map) throws IOException {
-        MustacheFactory mf = new DefaultMustacheFactory();
-        StringReader sr = new StringReader(IOUtils.toString(getClass().getResourceAsStream(emailTemplate)));
-        Mustache mustache = mf.compile(sr, "test");
-        StringWriter sw = new StringWriter();
-        mustache.execute(sw, map);
-        return sw.toString();
+        return RenderMustache.render(emailTemplate, map);
     }
 }
