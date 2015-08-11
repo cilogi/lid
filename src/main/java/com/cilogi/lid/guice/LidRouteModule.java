@@ -51,14 +51,10 @@ public class LidRouteModule extends ServletModule {
 
         serve(prop("email.login")).with(EmailLoginServlet.class);
         serve(prop("email.loginReturn")).with(EmailLoginReturn.class);
-
         serve(prop("google.login")).with(GoogleLoginServlet.class);
         serve(prop("google.loginReturn")).with(GoogleLoginReturnServlet.class);
-
         serve(prop("facebook.login")).with(FacebookLoginServlet.class);
-
         serve(prop("logout")).with(LogoutServlet.class);
-
         serve(prop("user.status")).with(StatusServlet.class);
     }
 

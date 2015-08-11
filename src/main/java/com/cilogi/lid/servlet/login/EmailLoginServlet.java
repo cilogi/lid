@@ -58,7 +58,9 @@ public class EmailLoginServlet extends BaseServlet {
             issueJson(response, HttpServletResponse.SC_BAD_REQUEST, "message", "There is no 'email' parameter");
         } else {
             if (!sendLoginEmail.isLegalEmail(email)) {
-                issueJson(response, HttpServletResponse.SC_BAD_REQUEST, "message", "Email address " + email + " is invalid");
+                boolean isEmpty = "".equals(email.trim());
+                issueJson(response, HttpServletResponse.SC_BAD_REQUEST, "message",
+                        isEmpty ? "Email value is empty" : "Email address " + email + " is invalid");
             } else {
                 try {
                     sendLoginEmail.send(email, redirectURL);

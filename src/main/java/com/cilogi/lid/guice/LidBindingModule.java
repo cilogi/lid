@@ -47,12 +47,11 @@ public class LidBindingModule extends AbstractModule {
     protected void configure() {
         bind(Boolean.class).annotatedWith(Development.class).toInstance(isDevelopmentServer());
         bind(Long.class).annotatedWith(CookieExpireDays.class).toInstance(longProp("cookie.expireDays"));
-        bind(Long.class).annotatedWith(CookieExpireDays.class).toInstance(longProp("cookie.expireDays"));
         bind(String.class).annotatedWith(DefaultRedirect.class).toInstance(prop("default.redirect")); // must not require auth
         bind(String.class).annotatedWith(EmailReturnURL.class)
                 .toInstance(isDevelopmentServer()
-                        ? prop("email.return.local") + prop("email.loginReturn")
-                        : prop("email.return.remote") + prop("email.loginReturn"));
+                        ? prop("host.development") + prop("email.loginReturn")
+                        : prop("host.production") + prop("email.loginReturn"));
         bind(String.class).annotatedWith(AuthRedirect.class)
                 .toInstance(prop("auth.redirect.default"));
         bind(String.class).annotatedWith(EmailFromAddress.class).toInstance(prop("email.from"));
@@ -60,17 +59,17 @@ public class LidBindingModule extends AbstractModule {
         bind(ISendEmail.class).to(SendLoginEmail.class);
     }
 
-    private static boolean isDevelopmentServer() {
+    protected static boolean isDevelopmentServer() {
         SystemProperty.Environment.Value server = SystemProperty.environment.value();
         return server == SystemProperty.Environment.Value.Development;
     }
 
 
-    private String prop(String s) {
+    protected String prop(String s) {
         return lidProperties.getProperty(s);
     }
 
-    private long longProp(String s) {
+    protected long longProp(String s) {
         String val = prop(s);
         return Long.parseLong(val);
     }
