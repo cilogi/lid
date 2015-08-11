@@ -67,16 +67,19 @@ public class EmailLoginReturn extends BaseServlet {
                 if (info.isExpired()) {
                     issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_BAD_REQUEST,
                             "Token has expired, you'll need to ask for a new one", response);
+                    return;
                 }
             } catch (RuntimeException e) {
                 issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_BAD_REQUEST,
                         "Can't parse token: " + e.getMessage(), response);
+                return;
             }
             try {
                 // create a new cookie so we get a different SALT to go with the different date
                 if (info == null || info.getEmail() == null) {
                     issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                             "The info is missing or corrupt: " + info, response);
+                    return;
                 } else {
                     CookieInfo newInfo = new CookieInfo(info.getEmail())
                             .setSite(Site.email)
@@ -89,6 +92,7 @@ public class EmailLoginReturn extends BaseServlet {
             } catch (Exception e) {
                 issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                         "Can't set user: " + e.getMessage(), response);
+                return;
             }
         }
     }

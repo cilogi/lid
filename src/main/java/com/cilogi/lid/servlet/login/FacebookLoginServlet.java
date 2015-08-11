@@ -72,9 +72,9 @@ public class FacebookLoginServlet extends BaseServlet {
                                 @CookieExpireDays long cookieExpireDays,
                                 @AuthRedirect String authRedirect,
                                 @DefaultRedirect String defaultRedirect) {
-        apiKey =    key(isDevelopmentServer, "apiKey");
+        apiKey = key(isDevelopmentServer, "apiKey");
         apiSecret = key(isDevelopmentServer, "apiSecret");
-        host =      key(isDevelopmentServer, "host");
+        host = key(isDevelopmentServer, "host");
         this.cookieExpireDays = cookieExpireDays;
         this.authRedirect = authRedirect;
         this.defaultRedirect = defaultRedirect;
@@ -87,6 +87,7 @@ public class FacebookLoginServlet extends BaseServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String currentUri = request.getRequestURI();
         String loginURL = loginURL(currentUri);
+        LOG.info("login URL is " + loginURL);
         response.sendRedirect(loginURL);
     }
 
@@ -99,7 +100,10 @@ public class FacebookLoginServlet extends BaseServlet {
         try {
             String code = request.getParameter("code");
             String currentUri = request.getRequestURI();
+            LOG.info("on return, URL is " + currentUri);
+
             OAuthInfo info = getUserInfo(code, currentUri);
+            LOG.info("info is " + info);
             if (info.isError()) {
                 String message = info.getErrorString();
                 issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_BAD_REQUEST,
@@ -114,7 +118,8 @@ public class FacebookLoginServlet extends BaseServlet {
                 LidUser.setCurrentUser(email);
 
                 String redirectURL = getAndDeleteSession(authRedirect, request, defaultRedirect);
-                revokeToken(info.getToken(), response, redirectURL);  // not totally sure about this, but it seems safer to revoke token immediately
+                LOG.info("redirectURL set to " + redirectURL);
+                response.sendRedirect(response.encodeRedirectURL(redirectURL));
             }
         } catch (Exception e) {
             issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -126,12 +131,12 @@ public class FacebookLoginServlet extends BaseServlet {
         Preconditions.checkArgument(redirectURL.startsWith("/"));
 
         OAuthService service = new ServiceBuilder()
-                                      .provider(FacebookApi.class)
-                                      .apiKey(apiKey)
-                                      .apiSecret(apiSecret)
-                                      .callback(host + redirectURL)
-                                      .scope("email")
-                                      .build();
+                .provider(FacebookApi.class)
+                .apiKey(apiKey)
+                .apiSecret(apiSecret)
+                .callback(host + redirectURL)
+                .scope("email")
+                .build();
         return service.getAuthorizationUrl(null);
     }
 
@@ -147,38 +152,27 @@ public class FacebookLoginServlet extends BaseServlet {
 
     private JSONObject getUserInfoJSON(String code, String callBackUrl) {
         OAuthService service = new ServiceBuilder()
-                                      .provider(FacebookApi.class)
-                                      .apiKey(apiKey)
-                                      .apiSecret(apiSecret)
-                                      .callback(host + callBackUrl)
-                                      .scope("email")
-                                      .build();
+                .provider(FacebookApi.class)
+                .apiKey(apiKey)
+                .apiSecret(apiSecret)
+                .callback(host + callBackUrl)
+                .scope("email")
+                .build();
         Verifier verifier = new Verifier(code);
         Token accessToken = service.getAccessToken(NULL_TOKEN, verifier);
         OAuthRequest request = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE_URL);
+        request.addOAuthParameter("scope", "email");
         service.signRequest(accessToken, request);
         Response response = request.send();
+        LOG.info("response body is " + response.getBody());
         try {
-            JSONObject obj =  new JSONObject(response.getBody());
+            JSONObject obj = new JSONObject(response.getBody());
             obj.put("access_token", accessToken.getToken());
             return obj;
         } catch (JSONException e) {
             return new JSONObject();
         }
     }
-
-    private void revokeToken(String token, HttpServletResponse response,
-                            String redirectURL)  throws IOException {
-        String redirectHome = host + redirectURL;
-
-        String url = logoutUrl(redirectHome, token);
-        response.sendRedirect(response.encodeRedirectURL(url));
-    }
-
-    private static String logoutUrl(String redirect, String accessToken) throws IOException {
-         String redirectOK = OAuthEncoder.encode(redirect);
-         return "https://www.facebook.com/logout.php?next="+redirectOK+"&access_token=" + accessToken;
-     }
 
     private static String key(boolean isDevelopmentServer, String key) {
         return isDevelopmentServer ? Secrets.get("fb.local." + key) : Secrets.get("fb.live." + key);
