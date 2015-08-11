@@ -83,7 +83,7 @@ public class AuthFilter implements Filter {
             }
         }
         if (authRequired) {
-            String user = LidUser.getCurrentUser();
+            String user = LidUser.userID();
             if (user == null) {
                 new SessionAttributes(sr).put(authRedirect, uri);
                 ((HttpServletResponse)response).sendRedirect(DEFAULT_REDIRECT);

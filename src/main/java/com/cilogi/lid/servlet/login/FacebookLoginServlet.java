@@ -39,7 +39,6 @@ import org.scribe.builder.ServiceBuilder;
 import org.scribe.builder.api.FacebookApi;
 import org.scribe.model.*;
 import org.scribe.oauth.OAuthService;
-import org.scribe.utils.OAuthEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +91,7 @@ public class FacebookLoginServlet extends BaseServlet {
     }
 
     /*
-     * Step 2: with the code from the original post we get the User's email (and the OAuth token). Then we
+     * Step 2: with the code from the original post we get the User's id (and the OAuth token). Then we
      *
      */
     @Override
@@ -109,13 +108,14 @@ public class FacebookLoginServlet extends BaseServlet {
                 issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_BAD_REQUEST,
                         "Couldn't get Facebook permission: " + message, response);
             } else {
-                String email = info.getEmail();
-                CookieInfo cookieInfo = new CookieInfo(email)
+                String id = info.getId();
+                CookieInfo cookieInfo = new CookieInfo(id)
+                        .setName(info.getName())
                         .setSite(Site.facebook)
                         .expire(cookieExpireDays, TimeUnit.DAYS);
                 CookieHandler handler = new CookieHandler();
                 handler.setCookie(request, response, cookieInfo);
-                LidUser.setCurrentUser(email);
+                LidUser.setInfo(cookieInfo);
 
                 String redirectURL = getAndDeleteSession(authRedirect, request, defaultRedirect);
                 LOG.info("redirectURL set to " + redirectURL);
@@ -135,7 +135,7 @@ public class FacebookLoginServlet extends BaseServlet {
                 .apiKey(apiKey)
                 .apiSecret(apiSecret)
                 .callback(host + redirectURL)
-                .scope("email")
+                .scope("id")
                 .build();
         return service.getAuthorizationUrl(null);
     }
@@ -146,7 +146,8 @@ public class FacebookLoginServlet extends BaseServlet {
         JSONObject obj = getUserInfoJSON(code, callBackUrl);
         return new OAuthInfo()
                 .setErrorString(errorString(obj))
-                .setEmail(obj.optString("email"))
+                .setId(obj.optString("id"))
+                .setName(obj.optString("id", obj.optString("name"))) // id can be null, name less likely to be
                 .setToken(obj.optString("access_token"));
     }
 
@@ -156,12 +157,12 @@ public class FacebookLoginServlet extends BaseServlet {
                 .apiKey(apiKey)
                 .apiSecret(apiSecret)
                 .callback(host + callBackUrl)
-                .scope("email")
+                .scope("id")
                 .build();
         Verifier verifier = new Verifier(code);
         Token accessToken = service.getAccessToken(NULL_TOKEN, verifier);
         OAuthRequest request = new OAuthRequest(Verb.GET, PROTECTED_RESOURCE_URL);
-        request.addOAuthParameter("scope", "email");
+        request.addOAuthParameter("scope", "id");
         service.signRequest(accessToken, request);
         Response response = request.send();
         LOG.info("response body is " + response.getBody());

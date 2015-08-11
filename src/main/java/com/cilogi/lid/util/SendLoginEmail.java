@@ -41,7 +41,7 @@ import java.io.StringWriter;
 import java.util.Map;
 
 /**
- * Send a login email to a named user
+ * Send a login id to a named user
  */
 public class SendLoginEmail implements ISendEmail {
     @SuppressWarnings("unused")
@@ -65,7 +65,7 @@ public class SendLoginEmail implements ISendEmail {
     @Override
     public void send(@NonNull String emailAddress, String redirectURL) throws IOException {
         if (!isLegalEmail(emailAddress)) {
-            throw new IllegalArgumentException("The email address " + emailAddress + " isn't valid");
+            throw new IllegalArgumentException("The id address " + emailAddress + " isn't valid");
         }
         CookieInfo info = new CookieInfo(emailAddress).setRedirect(redirectURL);
         String token = info.toEncryptedString();

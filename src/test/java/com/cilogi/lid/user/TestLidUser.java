@@ -20,6 +20,7 @@
 
 package com.cilogi.lid.user;
 
+import com.cilogi.lid.cookie.CookieInfo;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,8 +45,8 @@ public class TestLidUser {
     @Test
     public void testSetAndGet() {
         String fred = "fred@flintstone.org";
-        LidUser.setCurrentUser(fred);
-        String user = LidUser.getCurrentUser();
+        LidUser.setInfo(new CookieInfo(fred));
+        String user = LidUser.userID();
         assertEquals(fred, user);
     }
 }

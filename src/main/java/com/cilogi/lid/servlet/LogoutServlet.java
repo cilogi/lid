@@ -62,7 +62,7 @@ public class LogoutServlet extends BaseServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String redirectUrl = stringParameter("redirect", request, defaultRedirect);
         try {
-            LidUser.setCurrentUser(null);
+            LidUser.setInfo(null);
             CookieHandler handler = new CookieHandler();
             CookieInfo info = handler.removeCookie(request, response);
             if (info != null && info.getSite() == Site.google) {

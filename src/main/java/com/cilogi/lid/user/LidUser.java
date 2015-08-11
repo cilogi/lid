@@ -20,8 +20,10 @@
 
 package com.cilogi.lid.user;
 
+import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.cookie.Site;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,26 +44,32 @@ public class LidUser {
         }
     };
 
-    public static String getCurrentUser() {
-        return lu.get().getUserName();
+    public static String userID() {
+        CookieInfo info = lu.get().getCookieInfo();
+        return (info == null) ? null : info.getId();
     }
 
-    public static Site getCurrentSite() {
-        return lu.get().getSite();
+    public static String userName() {
+        CookieInfo info = lu.get().getCookieInfo();
+        if (info == null) {
+            return null;
+        } else {
+            return (info.getName() == null) ? info.getId() : info.getName();
+        }
     }
 
-    public static void setCurrentUser(String userName) {
-        lu.get().setUserName(userName);
+    public static Site site() {
+        CookieInfo info = lu.get().getCookieInfo();
+        return (info == null) ? null : info.getSite();
     }
 
-    public static void setCurrentSite(Site site) {
-        lu.get().setSite(site);
+    public static void setInfo(CookieInfo info) {
+        lu.get().setCookieInfo(info);
     }
 
     @Getter @Setter
-    private String userName;
-    @Getter @Setter
-    private Site site;
+    private CookieInfo cookieInfo;
+
 
     private LidUser() {}
 

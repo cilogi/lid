@@ -67,7 +67,7 @@ public class GoogleLoginReturnServlet extends BaseServlet {
                     .expire(cookieExpireDays, TimeUnit.DAYS);
             CookieHandler handler = new CookieHandler();
             handler.setCookie(request, response, info);
-            LidUser.setCurrentUser(email);
+            LidUser.setInfo(info);
             response.sendRedirect(redirectURL);
         } else {
             response.sendRedirect(defaultRedirect);

@@ -39,7 +39,7 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
- * The payload of a cookie.  It contains the email of the registered user
+ * The payload of a cookie.  It contains the id of the registered user
  * and the expiry time of the cookie. No expired cookie should be accepted.
  */
 @Data
@@ -52,15 +52,16 @@ public class CookieInfo implements Serializable {
 
     private static final byte[] KEY128 = Base64.decodeBase64(Secrets.get("jose.128"));
 
-    // default offer is valid for 30 minutes, assuming that its an email
+    // default offer is valid for 30 minutes, assuming that its an id
     // you need longer for cookies, perhaps 30 days.
     private static final long EXPIRY = TimeUnit.MILLISECONDS.convert(30L, TimeUnit.MINUTES);
     private static final SecureRandom rand = new SecureRandom();
 
-    private String email;
+    private String id;
+    private String name;
     private Date expires;
-    private String salt;  // useful if there is an attack where the email and expiry is known or guessed
-    private Site site;  // the site which provided the email (e.g. email, google, facebook), null when emailing cookie
+    private String salt;  // useful if there is an attack where the id and expiry is known or guessed
+    private Site site;  // the site which provided the id (e.g. id, google, facebook), null when emailing cookie
     private String redirect; // if we're in the middle of authorisation and need an Email id then this can be used
 
     private static String salt() {
@@ -85,12 +86,12 @@ public class CookieInfo implements Serializable {
 
     private CookieInfo() {}
 
-    public CookieInfo(String email) {
-        this(email, new Date(new Date().getTime() + EXPIRY));
+    public CookieInfo(String id) {
+        this(id, new Date(new Date().getTime() + EXPIRY));
     }
 
-    public CookieInfo(@NonNull String email, @NonNull Date expires) {
-        this.email = email;
+    public CookieInfo(@NonNull String id, @NonNull Date expires) {
+        this.id = id;
         this.expires = expires;
         this.salt = salt();
     }

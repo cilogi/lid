@@ -32,7 +32,7 @@ public class SendEmail {
             service.send(message);
             LOG.info("message has been sent from " + fromAddress + " to " + toAddress);
         } catch (IOException e) {
-            LOG.warning("Can't send email from " + fromAddress + " to " + toAddress + " about " + title + ": " + e.getMessage());
+            LOG.warning("Can't send id from " + fromAddress + " to " + toAddress + " about " + title + ": " + e.getMessage());
         }
     }
 }

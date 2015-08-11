@@ -50,12 +50,12 @@ public class LidBindingModule extends AbstractModule {
         bind(String.class).annotatedWith(DefaultRedirect.class).toInstance(prop("default.redirect")); // must not require auth
         bind(String.class).annotatedWith(EmailReturnURL.class)
                 .toInstance(isDevelopmentServer()
-                        ? prop("email.return.local") + prop("email.loginReturn")
-                        : prop("email.return.remote") + prop("email.loginReturn"));
+                        ? prop("id.return.local") + prop("id.loginReturn")
+                        : prop("id.return.remote") + prop("id.loginReturn"));
         bind(String.class).annotatedWith(AuthRedirect.class)
                 .toInstance(prop("auth.redirect.default"));
-        bind(String.class).annotatedWith(EmailFromAddress.class).toInstance(prop("email.from"));
-        bind(String.class).annotatedWith(EmailTemplate.class).toInstance(prop("email.template"));
+        bind(String.class).annotatedWith(EmailFromAddress.class).toInstance(prop("id.from"));
+        bind(String.class).annotatedWith(EmailTemplate.class).toInstance(prop("id.template"));
         bind(ISendEmail.class).to(SendLoginEmail.class);
     }
 

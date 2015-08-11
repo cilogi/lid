@@ -33,7 +33,8 @@ class OAuthInfo {
     static final Logger LOG = LoggerFactory.getLogger(OAuthInfo.class);
 
     private String token;
-    private String email;
+    private String id;
+    private String name;
     private String errorString;
 
     OAuthInfo() {}

@@ -61,7 +61,7 @@ public class BaseServlet extends HttpServlet {
 
     @SuppressWarnings({"unused"})
     protected String getCurrentUserName() {
-        return LidUser.getCurrentUser();
+        return LidUser.userID();
     }
 
     @SuppressWarnings({"unused"})

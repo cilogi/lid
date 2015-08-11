@@ -76,17 +76,18 @@ public class EmailLoginReturn extends BaseServlet {
             }
             try {
                 // create a new cookie so we get a different SALT to go with the different date
-                if (info == null || info.getEmail() == null) {
+                if (info == null || info.getId() == null) {
                     issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                             "The info is missing or corrupt: " + info, response);
                     return;
                 } else {
-                    CookieInfo newInfo = new CookieInfo(info.getEmail())
+                    CookieInfo newInfo = new CookieInfo(info.getId())
+                            .setName(info.getName())
                             .setSite(Site.email)
                             .expire(cookieExpireDays, TimeUnit.DAYS);
                     CookieHandler handler = new CookieHandler();
                     handler.setCookie(request, response, newInfo);
-                    LidUser.setCurrentUser(newInfo.getEmail());
+                    LidUser.setInfo(newInfo);
                     response.sendRedirect(redirectURL(info));
                 }
             } catch (Exception e) {

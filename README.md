@@ -50,7 +50,7 @@ an Email.  It means that the user needs to remember which
 authentication method they used.  Of course they need to remember which
 Email address they use in any case and some people may have different
 Emails for Google, Facebook and their everyday Email...  Simplest is
-probably to tell the user what the ID is (ie Google:<email>,
+probably to tell the user what the ID is (ie Google:<id>,
 Facebook:<Id>) explicitly.
 
 ## Caveat
@@ -105,7 +105,7 @@ Identity
       There are no doubt better ways.
 
 2.    The Google and Facebook logins work with simple forms being
-      posted. The email login is a little different as after the
+      posted. The id login is a little different as after the
       initial post the user has to move to another window/app in order
       to access the generated URL.  You can see how we've done this in
       the `script.js` file, which also uses a user status servlet to

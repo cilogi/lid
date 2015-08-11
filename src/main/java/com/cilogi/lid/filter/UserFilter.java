@@ -60,8 +60,7 @@ public class UserFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         CookieHandler handler = new CookieHandler();
         CookieInfo info = handler.getCookie((HttpServletRequest)request);
-        LidUser.setCurrentUser((info == null || info.isExpired()) ? null : info.getEmail());
-        LidUser.setCurrentSite((info == null) ? null : info.getSite());
+        LidUser.setInfo(info);
         chain.doFilter(request, response);
     }
 
