@@ -108,7 +108,9 @@ public class FacebookLoginServlet extends BaseServlet {
                 issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_BAD_REQUEST,
                         "Couldn't get Facebook permission: " + message, response);
             } else {
-                String id = info.getId();
+                // we take the Email address if there is one, as that is more general.  Problem when it goes though
+                // we'll need an account unification/merge operation...
+                String id = "".equals(info.getEmail()) ? info.getId() : info.getEmail();
                 CookieInfo cookieInfo = new CookieInfo(id)
                         .setName(info.getName())
                         .setSite(Site.facebook)
@@ -148,6 +150,7 @@ public class FacebookLoginServlet extends BaseServlet {
                 .setErrorString(errorString(obj))
                 .setId(obj.optString("id"))
                 .setName(obj.optString("name", obj.optString("id"))) // name can be null, id wont be
+                .setEmail(obj.optString("email"))
                 .setToken(obj.optString("access_token"));
     }
 

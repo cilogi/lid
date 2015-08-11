@@ -21,6 +21,7 @@
 package com.cilogi.lid.filter;
 
 import com.cilogi.lid.guice.annotations.AuthRedirect;
+import com.cilogi.lid.guice.annotations.LoginPage;
 import com.cilogi.lid.user.LidUser;
 import com.cilogi.lid.util.session.SessionAttributes;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -43,16 +44,17 @@ public class AuthFilter implements Filter {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(AuthFilter.class);
 
-    private static final String DEFAULT_REDIRECT = "/login.html";
 
 
     private final List<Pattern> authorizedPaths;
     private final String authRedirect;
+    private final String loginPage;
 
     @Inject
-    public AuthFilter(@AuthRedirect String authRedirect) {
+    public AuthFilter(@AuthRedirect String authRedirect, @LoginPage String loginPage) {
         authorizedPaths = Lists.newArrayList();
         this.authRedirect = authRedirect;
+        this.loginPage = loginPage;
     }
 
     @Override public void init(FilterConfig filterConfig) throws ServletException {
@@ -86,7 +88,7 @@ public class AuthFilter implements Filter {
             String user = LidUser.userID();
             if (user == null) {
                 new SessionAttributes(sr).put(authRedirect, uri);
-                ((HttpServletResponse)response).sendRedirect(DEFAULT_REDIRECT);
+                ((HttpServletResponse)response).sendRedirect(loginPage);
             } else {
                 chain.doFilter(request, response);
             }
