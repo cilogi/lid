@@ -22,6 +22,7 @@ package com.cilogi.lid.util;
 
 import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.guice.annotations.EmailFromAddress;
+import com.cilogi.lid.guice.annotations.EmailHeading;
 import com.cilogi.lid.guice.annotations.EmailReturnURL;
 import com.cilogi.lid.guice.annotations.EmailTemplate;
 import com.google.common.collect.ImmutableMap;
@@ -45,14 +46,17 @@ public class SendLoginEmail implements ISendEmail {
     private final SendEmail sendEmail;
     private final String fromAddress;
     private final String emailTemplate;
+    private final String emailHeading;
 
     @Inject
     public SendLoginEmail(@EmailFromAddress String fromAddress,
                           @EmailReturnURL String returnAddress,
+                          @EmailHeading String emailHeading,
                           @EmailTemplate String emailTemplate) {
         this.fromAddress = fromAddress;
         this.returnAddress = returnAddress;
         this.emailTemplate = emailTemplate;
+        this.emailHeading = emailHeading;
         this.sendEmail = new SendEmail(fromAddress);
     }
 
@@ -66,7 +70,7 @@ public class SendLoginEmail implements ISendEmail {
         String fullAddress = returnAddress + "?token=" + token;
         LOG.info("Email from " + fromAddress + " to " + emailAddress + " URL is " + fullAddress);
         String htmlBody = htmlBody(ImmutableMap.of("from", fromAddress, "to", emailAddress, "fullAddress", fullAddress));
-        sendEmail.send(emailAddress, "Please go the enclosed address to log in to cilogi-liddemo", htmlBody);
+        sendEmail.send(emailAddress, emailHeading, htmlBody);
     }
 
 
