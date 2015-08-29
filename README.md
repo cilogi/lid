@@ -80,7 +80,7 @@ Identity
       There is no general rule here, whatever fits in with your
       scheme.  There are quite a few end-points, and we've documented
       them.
-    * While you're exending it make sure to include the base binding
+    * While you're extending the context listener make sure to include the base binding
       and route modules as we've done in the example.  Your own
       modules should come later.
     * Set up your secret properties, ours are at
@@ -111,8 +111,36 @@ Identity
       the `script.js` file, which also uses a user status servlet to
       find status by Ajax.  You may prefer to generate the files
       server-side with the user information added. 
-      
-       
+
+There is a working example [here](https://github.com/cilogi/lid-demo) which
+only needs Facebook keys added.
+
+#Maven
+
+You can use the library from Maven.  by including the following Maven repository
+
+    <repositories>
+    ...
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    ...
+    </repositories>
+
+and the following dependency
+
+    <dependencies>
+    ...
+        <dependency>
+            <groupId>com.github.cilogi</groupId>
+            <artifactId>lid</artifactId>
+            <version>v1.0.1</version>
+        </dependency>
+    ...
+    </dependencies>
+
+
 Enjoy. Please use the Github issues for anything that's not clear.
 
 The License is MIT.
