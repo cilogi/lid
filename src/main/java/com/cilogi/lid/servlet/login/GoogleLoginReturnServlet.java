@@ -49,17 +49,21 @@ public class GoogleLoginReturnServlet extends BaseServlet {
 
     private final long cookieExpireDays;
     private final String defaultRedirect;
+    private final ILoginAction loginAction;
 
     @Inject
-    public GoogleLoginReturnServlet(@CookieExpireDays long cookieExpireDays, @DefaultRedirect String defaultRedirect) {
+    public GoogleLoginReturnServlet(@CookieExpireDays long cookieExpireDays, @DefaultRedirect String defaultRedirect,
+                                    ILoginAction loginAction) {
         this.cookieExpireDays = cookieExpireDays;
         this.defaultRedirect = defaultRedirect;
+        this.loginAction = loginAction;
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         User user = UserServiceFactory.getUserService().getCurrentUser();
         String redirectURL = stringParameter("redirect", request, defaultRedirect);
+        LOG.info("Google login redirect to " + redirectURL);
         if (user != null) {
             String email = user.getEmail();
             CookieInfo info = new CookieInfo(email)
@@ -68,6 +72,7 @@ public class GoogleLoginReturnServlet extends BaseServlet {
             CookieHandler handler = new CookieHandler();
             handler.setCookie(request, response, info);
             LidUser.setInfo(info);
+            loginAction.act(info);
             response.sendRedirect(redirectURL);
         } else {
             response.sendRedirect(defaultRedirect);

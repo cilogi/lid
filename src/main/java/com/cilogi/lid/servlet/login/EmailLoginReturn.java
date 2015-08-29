@@ -48,11 +48,13 @@ public class EmailLoginReturn extends BaseServlet {
 
     private final long cookieExpireDays;
     private final String defaultRedirect;
+    private final ILoginAction loginAction;
 
     @Inject
-    public EmailLoginReturn(@CookieExpireDays long cookieExpireDays, @DefaultRedirect String defaultRedirect) {
+    public EmailLoginReturn(@CookieExpireDays long cookieExpireDays, @DefaultRedirect String defaultRedirect, ILoginAction loginAction) {
         this.cookieExpireDays = cookieExpireDays;
         this.defaultRedirect = defaultRedirect;
+        this.loginAction = loginAction;
     }
 
     @Override
@@ -88,6 +90,7 @@ public class EmailLoginReturn extends BaseServlet {
                     CookieHandler handler = new CookieHandler();
                     handler.setCookie(request, response, newInfo);
                     LidUser.setInfo(newInfo);
+                    loginAction.act(newInfo);
                     response.sendRedirect(redirectURL(info));
                 }
             } catch (Exception e) {

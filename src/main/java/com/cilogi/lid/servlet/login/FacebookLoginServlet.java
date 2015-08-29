@@ -65,18 +65,21 @@ public class FacebookLoginServlet extends BaseServlet {
     private final long cookieExpireDays;
     private final String authRedirect;
     private final String defaultRedirect;
+    private final ILoginAction loginAction;
 
     @Inject
     public FacebookLoginServlet(@Development boolean isDevelopmentServer,
                                 @CookieExpireDays long cookieExpireDays,
                                 @AuthRedirect String authRedirect,
-                                @DefaultRedirect String defaultRedirect) {
+                                @DefaultRedirect String defaultRedirect,
+                                ILoginAction loginAction) {
         apiKey = key(isDevelopmentServer, "apiKey");
         apiSecret = key(isDevelopmentServer, "apiSecret");
         host = key(isDevelopmentServer, "host");
         this.cookieExpireDays = cookieExpireDays;
         this.authRedirect = authRedirect;
         this.defaultRedirect = defaultRedirect;
+        this.loginAction = loginAction;
     }
 
     /*
@@ -118,7 +121,7 @@ public class FacebookLoginServlet extends BaseServlet {
                 CookieHandler handler = new CookieHandler();
                 handler.setCookie(request, response, cookieInfo);
                 LidUser.setInfo(cookieInfo);
-
+                loginAction.act(cookieInfo);
                 String redirectURL = getAndDeleteSession(authRedirect, request, defaultRedirect);
                 LOG.info("redirectURL set to " + redirectURL);
                 response.sendRedirect(response.encodeRedirectURL(redirectURL));
