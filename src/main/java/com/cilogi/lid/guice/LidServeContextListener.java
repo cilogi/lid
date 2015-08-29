@@ -56,7 +56,9 @@ public class LidServeContextListener extends GuiceServletContextListener {
         }
     }
 
-    /** Override this to change the location of the setup properties */
+    /** Override this to change the location of the setup properties
+     *  @return the location of the properties
+     * */
     protected String getResourceLocation() {
         return "/lid.properties";
     }
