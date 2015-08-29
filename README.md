@@ -1,6 +1,6 @@
 # A lightweight identity solution for Java on App Engine
 
-There is a demo on [App Engine](https://cilogi-liddemo.appspot.com)
+There is a demo on [App Engine](https://cilogi-liddemo.appspot.com).
 
 This code provides a simple identity solution for App Engine on Java.
 Its similar to the built-in user service but works with Google,
@@ -32,7 +32,8 @@ All these solutions work by us storing an encrypted cookie, which
 contains the ID and an expiry time.  Its quite difficult to
 break the encryption, but we're using [TEA][1] for simplicity, with 16
 bytes of random salt, and if you don't trust it then use something
-else.
+else. I _did_ try [JWT][2] and [JWE][3]
+but they're very complicated and I couldn't get them to work reasonably.
 
 The Email solution sends an Email to users who wants to log in. They
 then have to click through a one-time (30 (configurable) minute
@@ -42,7 +43,7 @@ Email each time.
 
 For all solutions, Google, Facebook and Email the cookie persists for
 a configurable amount of time (30 days by default) or until the
-browser deleted it, or if the user _logs out_ of the app. The OAuth
+browser deletes it, or if the user _logs out_ of the app. The OAuth
 token is never stored.
 
 Its a problem that Facebook have moved away from always providing
@@ -113,7 +114,7 @@ Identity
       server-side with the user information added. 
 
 There is a working example [here](https://github.com/cilogi/lid-demo) which
-only needs Facebook keys added.
+only needs Facebook keys added.  You can see the live demo [here](https://cilogi-liddemo.appspot.com/).
 
 #Maven
 
@@ -147,3 +148,5 @@ The License is MIT.
 
 
 [1]: https://en.wikipedia.org/wiki/XXTEA
+[2]: https://www.rfc-editor.org/info/rfc7519
+[3]: https://tools.ietf.org/html/rfc7516
