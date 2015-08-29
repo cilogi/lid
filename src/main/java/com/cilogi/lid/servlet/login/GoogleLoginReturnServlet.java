@@ -67,6 +67,7 @@ public class GoogleLoginReturnServlet extends BaseServlet {
         if (user != null) {
             String email = user.getEmail();
             CookieInfo info = new CookieInfo(email)
+                    .setName(user.getNickname())
                     .setSite(Site.google)
                     .expire(cookieExpireDays, TimeUnit.DAYS);
             CookieHandler handler = new CookieHandler();
