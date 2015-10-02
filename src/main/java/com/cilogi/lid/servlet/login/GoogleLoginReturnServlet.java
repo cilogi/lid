@@ -25,6 +25,7 @@ import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.cookie.Site;
 import com.cilogi.lid.guice.annotations.CookieExpireDays;
 import com.cilogi.lid.guice.annotations.DefaultRedirect;
+import com.cilogi.lid.guice.annotations.HttpOnly;
 import com.cilogi.lid.servlet.BaseServlet;
 import com.cilogi.lid.user.LidUser;
 import com.google.appengine.api.users.User;
@@ -49,13 +50,15 @@ public class GoogleLoginReturnServlet extends BaseServlet {
 
     private final long cookieExpireDays;
     private final String defaultRedirect;
+    private final boolean httpOnly;
     private final ILoginAction loginAction;
 
     @Inject
     public GoogleLoginReturnServlet(@CookieExpireDays long cookieExpireDays, @DefaultRedirect String defaultRedirect,
-                                    ILoginAction loginAction) {
+                                    @HttpOnly boolean httpOnly, ILoginAction loginAction) {
         this.cookieExpireDays = cookieExpireDays;
         this.defaultRedirect = defaultRedirect;
+        this.httpOnly = httpOnly;
         this.loginAction = loginAction;
     }
 
@@ -70,7 +73,7 @@ public class GoogleLoginReturnServlet extends BaseServlet {
                     .setName(user.getNickname())
                     .setSite(Site.google)
                     .expire(cookieExpireDays, TimeUnit.DAYS);
-            CookieHandler handler = new CookieHandler();
+            CookieHandler handler = new CookieHandler(httpOnly);
             handler.setCookie(request, response, info);
             LidUser.setInfo(info);
             loginAction.act(info);

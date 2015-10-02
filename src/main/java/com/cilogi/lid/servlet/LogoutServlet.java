@@ -24,6 +24,7 @@ import com.cilogi.lid.cookie.CookieHandler;
 import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.cookie.Site;
 import com.cilogi.lid.guice.annotations.DefaultRedirect;
+import com.cilogi.lid.guice.annotations.HttpOnly;
 import com.cilogi.lid.user.LidUser;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -46,10 +47,12 @@ public class LogoutServlet extends BaseServlet {
     private static final long serialVersionUID = -5286590258162363047L;
 
     private final String defaultRedirect;
+    private final boolean httpOnly;
 
     @Inject
-    public LogoutServlet(@DefaultRedirect String defaultRedirect) {
+    public LogoutServlet(@DefaultRedirect String defaultRedirect, @HttpOnly boolean httpOnly) {
         this.defaultRedirect = defaultRedirect;
+        this.httpOnly = httpOnly;
     }
 
     @Override
@@ -63,7 +66,7 @@ public class LogoutServlet extends BaseServlet {
         String redirectUrl = stringParameter("redirect", request, defaultRedirect);
         try {
             LidUser.setInfo(null);
-            CookieHandler handler = new CookieHandler();
+            CookieHandler handler = new CookieHandler(httpOnly);
             CookieInfo info = handler.removeCookie(request, response);
             if (info != null && info.getSite() == Site.google) {
                 logoutGoogle(redirectUrl, response);

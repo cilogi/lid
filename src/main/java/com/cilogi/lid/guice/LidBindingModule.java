@@ -65,6 +65,7 @@ public class LidBindingModule extends AbstractModule {
         bind(String.class).annotatedWith(LoginPage.class).toInstance(prop("login.page"));
 
         bind(ISendEmail.class).to(SendLoginEmail.class);
+        bind(boolean.class).annotatedWith(HttpOnly.class).toInstance(booleanProp("cookie.httpOnly"));
     }
 
     protected static boolean isDevelopmentServer() {
@@ -80,5 +81,10 @@ public class LidBindingModule extends AbstractModule {
     protected long longProp(String s) {
         String val = prop(s);
         return Long.parseLong(val);
+    }
+
+    protected boolean booleanProp(String s) {
+        String val = prop(s);
+        return Boolean.parseBoolean(val);
     }
 }

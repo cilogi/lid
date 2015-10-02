@@ -47,9 +47,7 @@ public class LidRouteModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
-        Map<String,String> userParams = new HashMap<>();
-        userParams.put("httpOnly", prop("cookie.httpOnly", "true"));
-        filter("/*").through(UserFilter.class, userParams);
+        filter("/*").through(UserFilter.class);
         filter("/*").through(AuthFilter.class);
 
 

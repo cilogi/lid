@@ -22,6 +22,7 @@ package com.cilogi.lid.filter;
 
 import com.cilogi.lid.cookie.CookieHandler;
 import com.cilogi.lid.cookie.CookieInfo;
+import com.cilogi.lid.guice.annotations.HttpOnly;
 import com.cilogi.lid.user.LidUser;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,15 +53,11 @@ public class UserFilter implements Filter {
     private boolean httpOnly;
 
     @Inject
-    public UserFilter() {
-        httpOnly = true;
+    public UserFilter(@HttpOnly boolean httpOnly) {
+        this.httpOnly = httpOnly;
     }
 
     @Override public void init(FilterConfig filterConfig) throws ServletException {
-        String httpOnlyString = filterConfig.getInitParameter("httpOnly");
-        if (httpOnlyString != null) {
-            httpOnly = Boolean.parseBoolean(httpOnlyString);
-        }
     }
 
     @Override public void destroy() {

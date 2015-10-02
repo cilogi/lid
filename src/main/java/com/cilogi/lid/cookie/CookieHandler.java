@@ -24,7 +24,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import lombok.Getter;
-import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,11 +54,11 @@ public class CookieHandler {
     @Getter
     private final boolean httpOnly;
 
-    @Inject
     public CookieHandler() {
         this(true);
     }
 
+    @Inject
     public CookieHandler(boolean httpOnly) {
         this.httpOnly = httpOnly;
     }
@@ -81,7 +80,7 @@ public class CookieHandler {
         HttpCookie cookie = new HttpCookie(LID_COOKIE_NAME)
                 .setValue(cookieValue)
                 .setMaxAge((int)maxAge)
-                .setHttpOnly(isHttpOnly());
+                .setHttpOnly(httpOnly);
         cookie.saveTo(request, response);
     }
 

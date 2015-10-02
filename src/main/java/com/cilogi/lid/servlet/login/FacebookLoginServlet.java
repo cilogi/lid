@@ -23,10 +23,7 @@ package com.cilogi.lid.servlet.login;
 import com.cilogi.lid.cookie.CookieHandler;
 import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.cookie.Site;
-import com.cilogi.lid.guice.annotations.AuthRedirect;
-import com.cilogi.lid.guice.annotations.CookieExpireDays;
-import com.cilogi.lid.guice.annotations.DefaultRedirect;
-import com.cilogi.lid.guice.annotations.Development;
+import com.cilogi.lid.guice.annotations.*;
 import com.cilogi.lid.servlet.BaseServlet;
 import com.cilogi.lid.user.LidUser;
 import com.cilogi.lid.util.Secrets;
@@ -65,6 +62,7 @@ public class FacebookLoginServlet extends BaseServlet {
     private final long cookieExpireDays;
     private final String authRedirect;
     private final String defaultRedirect;
+    private final boolean httpOnly;
     private final ILoginAction loginAction;
 
     @Inject
@@ -72,6 +70,7 @@ public class FacebookLoginServlet extends BaseServlet {
                                 @CookieExpireDays long cookieExpireDays,
                                 @AuthRedirect String authRedirect,
                                 @DefaultRedirect String defaultRedirect,
+                                @HttpOnly boolean httpOnly,
                                 ILoginAction loginAction) {
         apiKey = key(isDevelopmentServer, "apiKey");
         apiSecret = key(isDevelopmentServer, "apiSecret");
@@ -79,6 +78,7 @@ public class FacebookLoginServlet extends BaseServlet {
         this.cookieExpireDays = cookieExpireDays;
         this.authRedirect = authRedirect;
         this.defaultRedirect = defaultRedirect;
+        this.httpOnly = httpOnly;
         this.loginAction = loginAction;
     }
 
@@ -118,7 +118,7 @@ public class FacebookLoginServlet extends BaseServlet {
                         .setName(info.getName())
                         .setSite(Site.facebook)
                         .expire(cookieExpireDays, TimeUnit.DAYS);
-                CookieHandler handler = new CookieHandler();
+                CookieHandler handler = new CookieHandler(httpOnly);
                 handler.setCookie(request, response, cookieInfo);
                 LidUser.setInfo(cookieInfo);
                 loginAction.act(cookieInfo);
