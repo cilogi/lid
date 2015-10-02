@@ -69,7 +69,7 @@ public class UserFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        CookieHandler handler = new CookieHandler();
+        CookieHandler handler = new CookieHandler(isHttpOnly());
         CookieInfo info = handler.getCookie((HttpServletRequest)request);
         LidUser.setInfo(info);
         chain.doFilter(request, response);
