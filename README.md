@@ -116,7 +116,7 @@ Identity
 There is a working example [here](https://github.com/cilogi/lid-demo) which
 only needs Facebook keys added.  You can see the live demo [here](https://cilogi-liddemo.appspot.com/).
 
-#Maven
+# Maven
 
 You can use the library from Maven.  by including the following Maven repository
 

@@ -23,6 +23,8 @@ package com.cilogi.lid.filter;
 import com.cilogi.lid.cookie.CookieHandler;
 import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.user.LidUser;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,11 +47,20 @@ public class UserFilter implements Filter {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(UserFilter.class);
 
+    @Getter
+    @Setter
+    private boolean httpOnly;
+
     @Inject
-    public UserFilter() {}
+    public UserFilter() {
+        httpOnly = true;
+    }
 
     @Override public void init(FilterConfig filterConfig) throws ServletException {
-
+        String httpOnlyString = filterConfig.getInitParameter("httpOnly");
+        if (httpOnlyString != null) {
+            httpOnly = Boolean.parseBoolean(httpOnlyString);
+        }
     }
 
     @Override public void destroy() {

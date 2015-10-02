@@ -85,7 +85,7 @@ public class HttpCookie {
     public HttpCookie() {
         this.maxAge = DEFAULT_MAX_AGE;
         this.version = DEFAULT_VERSION;
-        this.httpOnly = true; //most of the cookies ever used by Shiro should be as secure as possible.
+        this.httpOnly = true; //most of the cookies ever used should be as secure as possible.
     }
 
     public HttpCookie(String name) {

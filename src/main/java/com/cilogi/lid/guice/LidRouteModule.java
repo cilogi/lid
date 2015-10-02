@@ -30,6 +30,8 @@ import com.google.inject.servlet.ServletModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 
@@ -45,7 +47,9 @@ public class LidRouteModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
-        filter("/*").through(UserFilter.class);
+        Map<String,String> userParams = new HashMap<>();
+        userParams.put("httpOnly", prop("cookie.httpOnly", "true"));
+        filter("/*").through(UserFilter.class, userParams);
         filter("/*").through(AuthFilter.class);
 
 
@@ -59,6 +63,11 @@ public class LidRouteModule extends ServletModule {
     }
 
     private String prop(String s) {
-        return lidProperties.getProperty(s);
+        return prop(s, null);
+    }
+
+    private String prop(String s, String deflt) {
+        String val = lidProperties.getProperty(s);
+        return (val == null) ? deflt : val;
     }
 }
