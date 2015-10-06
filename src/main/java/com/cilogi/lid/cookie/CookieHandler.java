@@ -54,7 +54,7 @@ public class CookieHandler {
     @Getter
     private final boolean httpOnly;
 
-    public CookieHandler() {
+    private CookieHandler() {
         this(true);
     }
 
@@ -67,7 +67,7 @@ public class CookieHandler {
         String value = new HttpCookie(LID_COOKIE_NAME).readValue(request);
         try {
             return (value == null) ? null : cookieCache.get(value);
-        } catch (ExecutionException e) {
+        } catch (Exception e) {
             LOG.warn("Exception getting cookie from cache: " + e.getMessage());
             return null; // should be safe enough, user won't be able to access anything secure
         }

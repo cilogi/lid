@@ -75,25 +75,29 @@ public class AuthFilter implements Filter {
     @SuppressWarnings({"unchecked"})
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest sr = (HttpServletRequest)request;
-        String uri = sr.getRequestURI();
-        String path = uri.startsWith("/") ? uri.substring(1) : uri;
-        boolean authRequired = false;
-        for (Pattern pattern : authorizedPaths) {
-            if (pattern.matcher(path).matches()) {
-                authRequired = true;
-                break;
+        try {
+            String uri = sr.getRequestURI();
+            String path = uri.startsWith("/") ? uri.substring(1) : uri;
+            boolean authRequired = false;
+            for (Pattern pattern : authorizedPaths) {
+                if (pattern.matcher(path).matches()) {
+                    authRequired = true;
+                    break;
+                }
             }
-        }
-        if (authRequired) {
-            String user = LidUser.userID();
-            if (user == null) {
-                new SessionAttributes(sr).put(authRedirect, uri);
-                ((HttpServletResponse)response).sendRedirect(loginPage);
+            if (authRequired) {
+                String user = LidUser.userID();
+                if (user == null) {
+                    new SessionAttributes(sr).put(authRedirect, uri);
+                    ((HttpServletResponse)response).sendRedirect(loginPage);
+                } else {
+                    chain.doFilter(request, response);
+                }
             } else {
                 chain.doFilter(request, response);
             }
-        } else {
-            chain.doFilter(request, response);
+        } catch (Exception e) {
+            ((HttpServletResponse)response).sendRedirect(loginPage);
         }
     }
 }
