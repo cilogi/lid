@@ -15,7 +15,7 @@
     <!-- Specify hard-coded project properties here -->
     <properties>
         <downloadSources>true</downloadSources>
-        <appengine.target.version>1.9.26</appengine.target.version>
+        <appengine.target.version>1.9.27</appengine.target.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jackson.version>2.6.0</jackson.version>
         <github.global.server>github</github.global.server>
@@ -102,11 +102,6 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>18.0</version>
-        </dependency>
-        <dependency>
-        	<groupId>com.google.appengine.tools</groupId>
-        	<artifactId>appengine-gcs-client</artifactId>
-        	<version>0.4.4</version>
         </dependency>
         <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>

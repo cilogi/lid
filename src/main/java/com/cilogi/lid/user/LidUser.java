@@ -23,7 +23,6 @@ package com.cilogi.lid.user;
 import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.cookie.Site;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +33,7 @@ import org.slf4j.LoggerFactory;
  * do in a general-purpose setting.  You'd probably need to store the information
  * in the session and make this method session-scoped (only from servlets).
  */
+@SuppressWarnings({"unused"})
 public class LidUser {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(LidUser.class);
@@ -61,6 +61,11 @@ public class LidUser {
     public static Site site() {
         CookieInfo info = lu.get().getCookieInfo();
         return (info == null) ? null : info.getSite();
+    }
+
+    public static String redirect() {
+        CookieInfo info = lu.get().getCookieInfo();
+        return (info == null) ? null : info.getRedirect();
     }
 
     public static void setInfo(CookieInfo info) {
