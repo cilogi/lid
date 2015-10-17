@@ -20,6 +20,7 @@
 
 package com.cilogi.lid.servlet.login;
 
+import com.cilogi.lid.filter.AuthFilter;
 import com.cilogi.lid.guice.annotations.AuthRedirect;
 import com.cilogi.lid.guice.annotations.DefaultRedirect;
 import com.cilogi.lid.servlet.BaseServlet;
@@ -54,7 +55,7 @@ public class GoogleLoginServlet extends BaseServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String redirectURL = getAndDeleteSession(authRedirect, request, defaultRedirect);
+        String redirectURL = getSession(AuthFilter.authRedirectKey(), request, defaultRedirect);
         try {
             String url = UserServiceFactory.getUserService().createLoginURL("/login/googleReturn?redirect=" + URLEncoder.encode(redirectURL, "UTF-8"));
             response.sendRedirect(url);

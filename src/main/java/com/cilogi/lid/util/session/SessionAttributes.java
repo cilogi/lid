@@ -43,6 +43,16 @@ public class SessionAttributes {
         session.setAttribute(key, value);
     }
 
+    public String get(@NonNull String key, String deflt) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return deflt;
+        } else {
+            String value = (String)session.getAttribute(key);
+            return (value == null) ? deflt : value;
+        }
+    }
+
     public String getAndDelete(@NonNull String key, String deflt) {
         HttpSession session = request.getSession(false);
         if (session == null) {

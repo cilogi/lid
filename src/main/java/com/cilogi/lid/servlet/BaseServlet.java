@@ -73,6 +73,10 @@ public class BaseServlet extends HttpServlet {
         return new SessionAttributes(request).getAndDelete(key, deflt);
     }
 
+    protected String getSession(@NonNull String key, @NonNull HttpServletRequest request, String deflt) {
+        return new SessionAttributes(request).get(key, deflt);
+    }
+
     static Map<String,Object> args2map(@NonNull Object... args) {
         Preconditions.checkArgument(args.length % 2 == 0, "There must be an even number of arguments");
         Map<String,Object> map = Maps.newLinkedHashMap(); // linked map for testing consistency

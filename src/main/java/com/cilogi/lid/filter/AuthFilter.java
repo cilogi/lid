@@ -44,11 +44,15 @@ public class AuthFilter implements Filter {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(AuthFilter.class);
 
-
+    private static final String AUTH_REDIRECT_KEY = "CilogiAuthRedirect";
 
     private final List<Pattern> authorizedPaths;
     private final String authRedirect;
     private final String loginPage;
+
+    public static final String authRedirectKey() {
+        return AUTH_REDIRECT_KEY;
+    }
 
     @Inject
     public AuthFilter(@AuthRedirect String authRedirect, @LoginPage String loginPage) {
@@ -88,7 +92,7 @@ public class AuthFilter implements Filter {
             if (authRequired) {
                 String user = LidUser.userID();
                 if (user == null) {
-                    new SessionAttributes(sr).put(authRedirect, uri);
+                    new SessionAttributes(sr).put(authRedirectKey(), uri);
                     ((HttpServletResponse)response).sendRedirect(loginPage);
                 } else {
                     chain.doFilter(request, response);
