@@ -45,8 +45,7 @@ public class HandleFilter implements Filter {
     private final String handleRedirect;
 
     @Inject
-    public HandleFilter(@NonNull IHandleHolder handleHolder,
-                        @HandleRedirect String handleRedirect) {
+    public HandleFilter(@NonNull IHandleHolder handleHolder, @HandleRedirect String handleRedirect) {
         this.handleHolder = handleHolder;
         this.handleRedirect = handleRedirect;
     }
@@ -57,7 +56,8 @@ public class HandleFilter implements Filter {
     @Override public void destroy() {}
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         if(httpRequest.getMethod().equalsIgnoreCase("GET")){
             String lidUser = LidUser.userID();
