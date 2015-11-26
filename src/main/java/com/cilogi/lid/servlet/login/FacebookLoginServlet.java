@@ -102,6 +102,12 @@ public class FacebookLoginServlet extends BaseServlet {
         try {
             String code = request.getParameter("code");
             String currentUri = request.getRequestURI();
+
+            String redirectURL = request.getParameter("redirect");
+            if (redirectURL != null) {
+                putSession(authRedirect, redirectURL, request);
+            }
+
             LOG.info("on return, URL is " + currentUri);
 
             OAuthInfo info = getUserInfo(code, currentUri);
@@ -122,7 +128,7 @@ public class FacebookLoginServlet extends BaseServlet {
                 handler.setCookie(request, response, cookieInfo);
                 LidUser.setInfo(cookieInfo);
                 loginAction.act(cookieInfo);
-                String redirectURL = getAndDeleteSession(authRedirect, request, defaultRedirect);
+                redirectURL = getAndDeleteSession(authRedirect, request, defaultRedirect);
                 LOG.info("redirectURL set to " + redirectURL);
                 response.sendRedirect(response.encodeRedirectURL(redirectURL));
             }

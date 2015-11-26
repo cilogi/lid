@@ -55,7 +55,7 @@ public class GoogleLoginServlet extends BaseServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String redirectURL = getSession(AuthFilter.authRedirectKey(), request, defaultRedirect);
+        String redirectURL = redirect(request);
         try {
             String url = UserServiceFactory.getUserService().createLoginURL("/login/googleReturn?redirect=" + URLEncoder.encode(redirectURL, "UTF-8"));
             response.sendRedirect(url);
@@ -65,5 +65,13 @@ public class GoogleLoginServlet extends BaseServlet {
         }
     }
 
-
+    private String redirect(HttpServletRequest request) {
+        String redirectURL = request.getParameter("redirect");
+        if (redirectURL != null) {
+            putSession(authRedirect, redirectURL, request);
+            return redirectURL;
+        } else {
+            return getSession(AuthFilter.authRedirectKey(), request, defaultRedirect);
+        }
+    }
 }

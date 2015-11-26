@@ -53,7 +53,13 @@ public class EmailLoginServlet extends BaseServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
-        String redirectURL = new SessionAttributes(request).getAndDelete(authRedirect, null);
+
+        String redirect = request.getParameter("redirect");
+        String redirectURL = (redirect == null) ? new SessionAttributes(request).getAndDelete(authRedirect, null) : redirect;
+        if (redirect != null) {
+            putSession(authRedirect, redirect, request);
+        }
+
         if (email == null) {
             issueJson(response, HttpServletResponse.SC_BAD_REQUEST, "message", "There is no 'email' parameter");
         } else {
