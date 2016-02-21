@@ -61,7 +61,7 @@ public class HandleFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         if(httpRequest.getMethod().equalsIgnoreCase("GET")){
             String lidUser = LidUser.userID();
-            if (lidUser == null || handleRedirect == null || httpRequest.getRequestURI().endsWith("/user/settings")) {
+            if (lidUser == null || handleRedirect == null || httpRequest.getRequestURI().endsWith(handleRedirect)) {
                 chain.doFilter(request, response);
             } else {
                 if (MAP.get(lidUser) != null) {

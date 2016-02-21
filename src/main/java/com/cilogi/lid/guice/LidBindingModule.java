@@ -50,6 +50,7 @@ public class LidBindingModule extends AbstractModule {
         bind(Boolean.class).annotatedWith(Development.class).toInstance(isDevelopmentServer());
         bind(Long.class).annotatedWith(CookieExpireDays.class).toInstance(longProp("cookie.expireDays"));
         bind(String.class).annotatedWith(DefaultRedirect.class).toInstance(prop("default.redirect")); // must not require auth
+        bind(String.class).annotatedWith(HandleRedirect.class).toInstance(prop("handle.redirect"));
 
         bind(String.class).annotatedWith(EmailReturnURL.class)
                 .toInstance(isDevelopmentServer()

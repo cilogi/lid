@@ -56,10 +56,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!--
-              GAE libraries for local testing as described here:
-              http://code.google.com/appengine/docs/java/howto/unittesting.html
-          -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
