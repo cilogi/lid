@@ -22,6 +22,7 @@ package com.cilogi.lid.servlet.handle;
 
 import com.cilogi.lid.guice.annotations.HandleRedirect;
 import com.cilogi.lid.user.LidUser;
+import com.cilogi.lid.util.session.SessionAttributes;
 import lombok.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class HandleFilter implements Filter {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(HandleFilter.class);
+
+    public static final String REDIRECT = "lidHandleRedirect";
 
     private static ConcurrentHashMap<String,Boolean> MAP = new ConcurrentHashMap<>();
 
@@ -69,6 +72,7 @@ public class HandleFilter implements Filter {
                 } else {
                     String handle = handleHolder.handle(lidUser);
                     if (handle == null) {
+                        new SessionAttributes(httpRequest).put(REDIRECT, httpRequest.getRequestURI());
                         HttpServletResponse httpResponse = (HttpServletResponse)response;
                         httpResponse.sendRedirect(httpResponse.encodeRedirectURL(handleRedirect));
                     } else {
