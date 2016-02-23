@@ -64,6 +64,7 @@ public class LidBindingModule extends AbstractModule {
         bind(String.class).annotatedWith(EmailHeading.class).toInstance(prop("email.heading"));
 
         bind(String.class).annotatedWith(LoginPage.class).toInstance(prop("login.page"));
+        bind(String.class).annotatedWith(LogoutPage.class).toInstance(prop("logout"));
 
         bind(ISendEmail.class).to(SendLoginEmail.class);
         bind(boolean.class).annotatedWith(HttpOnly.class).toInstance(booleanProp("cookie.httpOnly"));

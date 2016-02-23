@@ -21,6 +21,7 @@
 package com.cilogi.lid.servlet.handle;
 
 import com.cilogi.lid.guice.annotations.HandleRedirect;
+import com.cilogi.lid.guice.annotations.LogoutPage;
 import com.cilogi.lid.user.LidUser;
 import com.cilogi.lid.util.session.SessionAttributes;
 import lombok.NonNull;
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Singleton
+@SuppressWarnings({"unused"})
 public class HandleFilter implements Filter {
     @SuppressWarnings("unused")
     static final Logger LOG = LoggerFactory.getLogger(HandleFilter.class);
@@ -46,11 +48,15 @@ public class HandleFilter implements Filter {
 
     private final IHandleHolder handleHolder;
     private final String handleRedirect;
+    private final String logoutPage;
 
     @Inject
-    public HandleFilter(@NonNull IHandleHolder handleHolder, @HandleRedirect String handleRedirect) {
+    public HandleFilter(@NonNull IHandleHolder handleHolder,
+                        @HandleRedirect String handleRedirect,
+                        @LogoutPage String logoutPage) {
         this.handleHolder = handleHolder;
         this.handleRedirect = handleRedirect;
+        this.logoutPage = logoutPage;
     }
 
     @Override
@@ -64,7 +70,9 @@ public class HandleFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         if(httpRequest.getMethod().equalsIgnoreCase("GET")){
             String lidUser = LidUser.userID();
-            if (lidUser == null || handleRedirect == null || httpRequest.getRequestURI().endsWith(handleRedirect)) {
+            if (lidUser == null || handleRedirect == null
+                    || httpRequest.getRequestURI().endsWith(handleRedirect)
+                    || httpRequest.getRequestURI().endsWith(logoutPage)) {
                 chain.doFilter(request, response);
             } else {
                 if (MAP.get(lidUser) != null) {
