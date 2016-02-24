@@ -90,41 +90,10 @@ public class GoogleLoginReturnServlet extends BaseServlet {
             LidUser.setInfo(info);
             loginAction.act(info);
 
-            String hr = handleRedirect();
-            if (hr != null) {
-                String fragment = fragmentOf(redirectURL);
-                if (fragment != null) {
-                    response.sendRedirect(response.encodeRedirectURL(hr + "?fragment=" + fragment + "&redirect=" + redirectURL));
-                } else {
-                    response.sendRedirect(response.encodeRedirectURL(hr + "?redirect=" + redirectURL));
-                }
-            } else {
-                response.sendRedirect(response.encodeRedirectURL(redirectURL));
-            }
+            String computedRedirect = Helpers.computeRedirect(redirectURL, handleHolder, handleRedirect);
+            response.sendRedirect(response.encodeRedirectURL(computedRedirect));
         } else {
             response.sendRedirect(response.encodeRedirectURL(defaultRedirect));
-        }
-    }
-
-
-    // we want to redirect here if the logged in user doesn't have a
-    //
-    private String handleRedirect() {
-        String userName = LidUser.userID();
-        if (userName == null) {
-            return null;
-        } else {
-            String handle = handleHolder.handle(userName);
-            return (handle == null) ? handleRedirect : null;
-        }
-    }
-
-    private String fragmentOf(String uriString) {
-        try {
-            URI uri = new URI(uriString);
-            return uri.getFragment();
-        } catch (URISyntaxException e) {
-            return null;
         }
     }
 }
