@@ -21,12 +21,10 @@
 package com.cilogi.lid.servlet.login;
 
 import com.cilogi.lid.filter.AuthFilter;
-import com.cilogi.lid.guice.annotations.AuthRedirect;
 import com.cilogi.lid.guice.annotations.DefaultRedirect;
 import com.cilogi.lid.guice.annotations.HandleRedirect;
 import com.cilogi.lid.servlet.BaseServlet;
 import com.cilogi.lid.servlet.handle.IHandleHolder;
-import com.cilogi.lid.user.LidUser;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.net.MediaType;
 import org.slf4j.Logger;

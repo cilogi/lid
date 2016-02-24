@@ -23,7 +23,6 @@ package com.cilogi.lid.servlet.login;
 import com.cilogi.lid.guice.annotations.AuthRedirect;
 import com.cilogi.lid.servlet.BaseServlet;
 import com.cilogi.lid.util.ISendEmail;
-import com.cilogi.lid.util.SendLoginEmail;
 import com.cilogi.lid.util.session.SessionAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

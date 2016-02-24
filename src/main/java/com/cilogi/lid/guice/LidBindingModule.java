@@ -23,8 +23,6 @@ package com.cilogi.lid.guice;
 
 
 import com.cilogi.lid.guice.annotations.*;
-import com.cilogi.lid.servlet.login.DefaultLoginAction;
-import com.cilogi.lid.servlet.login.ILoginAction;
 import com.cilogi.lid.util.ISendEmail;
 import com.cilogi.lid.util.SendLoginEmail;
 import com.google.appengine.api.utils.SystemProperty;

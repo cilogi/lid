@@ -1,6 +1,6 @@
 // Copyright (c) 2016 Cilogi. All Rights Reserved.
 //
-// File:        LogoutPage.java  (23/02/16)
+// File:        TestGoogleLoginReturnServlet.java  (24/02/16)
 // Author:      tim
 //
 // Copyright in the whole and every part of this source file belongs to
@@ -18,18 +18,36 @@
 //
 
 
-package com.cilogi.lid.guice.annotations;
+package com.cilogi.lid.servlet.login;
 
-import com.google.inject.BindingAnnotation;
+import org.junit.Before;
+import org.junit.Test;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static java.lang.annotation.ElementType.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-@BindingAnnotation
-@Retention(RetentionPolicy.RUNTIME)
-@Target( { FIELD, PARAMETER, METHOD })
-public @interface LogoutPage {
+import static org.junit.Assert.*;
+
+public class TestGoogleLoginReturnServlet {
+    @SuppressWarnings("unused")
+    static final Logger LOG = LoggerFactory.getLogger(TestGoogleLoginReturnServlet.class);
+
+
+    public TestGoogleLoginReturnServlet() {
+    }
+
+    @Before
+    public void setUp() {
+
+    }
+
+    @Test
+    public void testFragment() throws URISyntaxException {
+        URI uri = new URI("http://localhost:8081/index/html#guide/botanics");
+        String fragment = uri.getFragment();
+        assertEquals("guide/botanics", fragment);
+    }
 }

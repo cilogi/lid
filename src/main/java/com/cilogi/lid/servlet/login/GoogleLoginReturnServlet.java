@@ -23,7 +23,6 @@ package com.cilogi.lid.servlet.login;
 import com.cilogi.lid.cookie.CookieHandler;
 import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.cookie.Site;
-import com.cilogi.lid.filter.AuthFilter;
 import com.cilogi.lid.guice.annotations.CookieExpireDays;
 import com.cilogi.lid.guice.annotations.DefaultRedirect;
 import com.cilogi.lid.guice.annotations.HandleRedirect;
@@ -42,6 +41,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 
 @Singleton
@@ -91,7 +92,12 @@ public class GoogleLoginReturnServlet extends BaseServlet {
 
             String hr = handleRedirect();
             if (hr != null) {
-                response.sendRedirect(response.encodeRedirectURL(hr + "?redirect=" + redirectURL));
+                String fragment = fragmentOf(redirectURL);
+                if (fragment != null) {
+                    response.sendRedirect(response.encodeRedirectURL(hr + "?fragment=" + fragment + "&redirect=" + redirectURL));
+                } else {
+                    response.sendRedirect(response.encodeRedirectURL(hr + "?redirect=" + redirectURL));
+                }
             } else {
                 response.sendRedirect(response.encodeRedirectURL(redirectURL));
             }
@@ -110,6 +116,15 @@ public class GoogleLoginReturnServlet extends BaseServlet {
         } else {
             String handle = handleHolder.handle(userName);
             return (handle == null) ? handleRedirect : null;
+        }
+    }
+
+    private String fragmentOf(String uriString) {
+        try {
+            URI uri = new URI(uriString);
+            return uri.getFragment();
+        } catch (URISyntaxException e) {
+            return null;
         }
     }
 }

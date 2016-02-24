@@ -5,7 +5,6 @@ import com.google.appengine.api.mail.MailService;
 import com.google.appengine.api.mail.MailServiceFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.logging.Logger;
