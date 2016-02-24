@@ -23,10 +23,13 @@ package com.cilogi.lid.servlet.login;
 import com.cilogi.lid.cookie.CookieHandler;
 import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.cookie.Site;
+import com.cilogi.lid.filter.AuthFilter;
 import com.cilogi.lid.guice.annotations.CookieExpireDays;
 import com.cilogi.lid.guice.annotations.DefaultRedirect;
+import com.cilogi.lid.guice.annotations.HandleRedirect;
 import com.cilogi.lid.guice.annotations.HttpOnly;
 import com.cilogi.lid.servlet.BaseServlet;
+import com.cilogi.lid.servlet.handle.IHandleHolder;
 import com.cilogi.lid.user.LidUser;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserServiceFactory;
@@ -50,16 +53,24 @@ public class GoogleLoginReturnServlet extends BaseServlet {
 
     private final long cookieExpireDays;
     private final String defaultRedirect;
+    private final String handleRedirect;
     private final boolean httpOnly;
     private final ILoginAction loginAction;
+    private final IHandleHolder handleHolder;
 
     @Inject
-    public GoogleLoginReturnServlet(@CookieExpireDays long cookieExpireDays, @DefaultRedirect String defaultRedirect,
-                                    @HttpOnly boolean httpOnly, ILoginAction loginAction) {
+    public GoogleLoginReturnServlet(@CookieExpireDays long cookieExpireDays,
+                                    @DefaultRedirect String defaultRedirect,
+                                    @HandleRedirect String handleRedirect,
+                                    @HttpOnly boolean httpOnly,
+                                    ILoginAction loginAction,
+                                    IHandleHolder handleHolder) {
         this.cookieExpireDays = cookieExpireDays;
         this.defaultRedirect = defaultRedirect;
+        this.handleRedirect = handleRedirect;
         this.httpOnly = httpOnly;
         this.loginAction = loginAction;
+        this.handleHolder = handleHolder;
     }
 
     @Override
@@ -77,9 +88,28 @@ public class GoogleLoginReturnServlet extends BaseServlet {
             handler.setCookie(request, response, info);
             LidUser.setInfo(info);
             loginAction.act(info);
-            response.sendRedirect(redirectURL);
+
+            String hr = handleRedirect();
+            if (hr != null) {
+                response.sendRedirect(response.encodeRedirectURL(hr + "?redirect=" + redirectURL));
+            } else {
+                response.sendRedirect(response.encodeRedirectURL(redirectURL));
+            }
         } else {
-            response.sendRedirect(defaultRedirect);
+            response.sendRedirect(response.encodeRedirectURL(defaultRedirect));
+        }
+    }
+
+
+    // we want to redirect here if the logged in user doesn't have a
+    //
+    private String handleRedirect() {
+        String userName = LidUser.userID();
+        if (userName == null) {
+            return null;
+        } else {
+            String handle = handleHolder.handle(userName);
+            return (handle == null) ? handleRedirect : null;
         }
     }
 }

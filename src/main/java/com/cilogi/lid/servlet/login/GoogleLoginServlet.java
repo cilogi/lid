@@ -23,7 +23,10 @@ package com.cilogi.lid.servlet.login;
 import com.cilogi.lid.filter.AuthFilter;
 import com.cilogi.lid.guice.annotations.AuthRedirect;
 import com.cilogi.lid.guice.annotations.DefaultRedirect;
+import com.cilogi.lid.guice.annotations.HandleRedirect;
 import com.cilogi.lid.servlet.BaseServlet;
+import com.cilogi.lid.servlet.handle.IHandleHolder;
+import com.cilogi.lid.user.LidUser;
 import com.google.appengine.api.users.UserServiceFactory;
 import com.google.common.net.MediaType;
 import org.slf4j.Logger;
@@ -44,12 +47,16 @@ public class GoogleLoginServlet extends BaseServlet {
 
     private static final long serialVersionUID = -3344803219460057213L;
 
-    private final String authRedirect;
+    private final IHandleHolder handleHolder;
+    private final String handleRedirect;
     private final String defaultRedirect;
 
     @Inject
-    public GoogleLoginServlet(@AuthRedirect String authRedirect, @DefaultRedirect String defaultRedirect) {
-        this.authRedirect = authRedirect;
+    public GoogleLoginServlet(IHandleHolder handleHolder,
+                              @HandleRedirect String handleRedirect,
+                              @DefaultRedirect String defaultRedirect) {
+        this.handleHolder = handleHolder;
+        this.handleRedirect = handleRedirect;
         this.defaultRedirect = defaultRedirect;
     }
 
@@ -67,11 +74,9 @@ public class GoogleLoginServlet extends BaseServlet {
 
     private String redirect(HttpServletRequest request) {
         String redirectURL = request.getParameter("redirect");
-        if (redirectURL != null) {
-            putSession(authRedirect, redirectURL, request);
-            return redirectURL;
-        } else {
-            return getSession(AuthFilter.authRedirectKey(), request, defaultRedirect);
+        if (redirectURL == null) {
+            redirectURL = getSession(AuthFilter.authRedirectKey(), request, defaultRedirect);
         }
+        return redirectURL;
     }
 }

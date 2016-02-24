@@ -53,8 +53,10 @@ public class EmailLoginReturn extends BaseServlet {
     private final ILoginAction loginAction;
 
     @Inject
-    public EmailLoginReturn(@CookieExpireDays long cookieExpireDays, @DefaultRedirect String defaultRedirect,
-                            @HttpOnly boolean httpOnly, ILoginAction loginAction) {
+    public EmailLoginReturn(@CookieExpireDays long cookieExpireDays,
+                            @DefaultRedirect String defaultRedirect,
+                            @HttpOnly boolean httpOnly,
+                            ILoginAction loginAction) {
         this.cookieExpireDays = cookieExpireDays;
         this.defaultRedirect = defaultRedirect;
         this.httpOnly = httpOnly;
