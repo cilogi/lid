@@ -25,6 +25,7 @@ import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.cookie.Site;
 import com.cilogi.lid.guice.annotations.*;
 import com.cilogi.lid.servlet.BaseServlet;
+import com.cilogi.lid.servlet.handle.IHandleHolder;
 import com.cilogi.lid.user.LidUser;
 import com.cilogi.lid.util.Secrets;
 import com.google.common.base.Preconditions;
@@ -64,6 +65,8 @@ public class FacebookLoginServlet extends BaseServlet {
     private final String defaultRedirect;
     private final boolean httpOnly;
     private final ILoginAction loginAction;
+    private final IHandleHolder handleHolder;
+    private final String handleRedirect;
 
     @Inject
     public FacebookLoginServlet(@Development boolean isDevelopmentServer,
@@ -71,7 +74,9 @@ public class FacebookLoginServlet extends BaseServlet {
                                 @AuthRedirect String authRedirect,
                                 @DefaultRedirect String defaultRedirect,
                                 @HttpOnly boolean httpOnly,
-                                ILoginAction loginAction) {
+                                ILoginAction loginAction,
+                                IHandleHolder handleHolder,
+                                @HandleRedirect String handleRedirect) {
         apiKey = key(isDevelopmentServer, "apiKey");
         apiSecret = key(isDevelopmentServer, "apiSecret");
         host = key(isDevelopmentServer, "host");
@@ -80,6 +85,8 @@ public class FacebookLoginServlet extends BaseServlet {
         this.defaultRedirect = defaultRedirect;
         this.httpOnly = httpOnly;
         this.loginAction = loginAction;
+        this.handleHolder = handleHolder;
+        this.handleRedirect = handleRedirect;
     }
 
     /*
@@ -129,8 +136,9 @@ public class FacebookLoginServlet extends BaseServlet {
                 LidUser.setInfo(cookieInfo);
                 loginAction.act(cookieInfo);
                 redirectURL = getAndDeleteSession(authRedirect, request, defaultRedirect);
-                LOG.info("redirectURL set to " + redirectURL);
-                response.sendRedirect(response.encodeRedirectURL(redirectURL));
+                String computedRedirect = Helpers.computeRedirect(redirectURL, handleHolder, handleRedirect);
+                LOG.info("redirectURL set to " + computedRedirect);
+                response.sendRedirect(response.encodeRedirectURL(computedRedirect));
             }
         } catch (Exception e) {
             issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,

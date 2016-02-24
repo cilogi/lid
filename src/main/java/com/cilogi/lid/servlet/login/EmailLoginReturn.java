@@ -25,8 +25,10 @@ import com.cilogi.lid.cookie.CookieInfo;
 import com.cilogi.lid.cookie.Site;
 import com.cilogi.lid.guice.annotations.CookieExpireDays;
 import com.cilogi.lid.guice.annotations.DefaultRedirect;
+import com.cilogi.lid.guice.annotations.HandleRedirect;
 import com.cilogi.lid.guice.annotations.HttpOnly;
 import com.cilogi.lid.servlet.BaseServlet;
+import com.cilogi.lid.servlet.handle.IHandleHolder;
 import com.cilogi.lid.user.LidUser;
 import com.google.common.net.MediaType;
 import org.slf4j.Logger;
@@ -51,16 +53,22 @@ public class EmailLoginReturn extends BaseServlet {
     private final String defaultRedirect;
     private final boolean httpOnly;
     private final ILoginAction loginAction;
+    private final IHandleHolder handleHolder;
+    private final String handleRedirect;
 
     @Inject
     public EmailLoginReturn(@CookieExpireDays long cookieExpireDays,
                             @DefaultRedirect String defaultRedirect,
                             @HttpOnly boolean httpOnly,
-                            ILoginAction loginAction) {
+                            ILoginAction loginAction,
+                            IHandleHolder handleHolder,
+                            @HandleRedirect String handleRedirect) {
         this.cookieExpireDays = cookieExpireDays;
         this.defaultRedirect = defaultRedirect;
         this.httpOnly = httpOnly;
         this.loginAction = loginAction;
+        this.handleHolder = handleHolder;
+        this.handleRedirect = handleRedirect;
     }
 
     @Override
@@ -69,7 +77,7 @@ public class EmailLoginReturn extends BaseServlet {
         if (token == null) {
             issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_BAD_REQUEST, "No token", response);
         } else {
-            CookieInfo info = null;
+            CookieInfo info;
             try {
                 info = CookieInfo.fromEncryptedString(token);
                 if (info.isExpired()) {
@@ -84,10 +92,9 @@ public class EmailLoginReturn extends BaseServlet {
             }
             try {
                 // create a new cookie so we get a different SALT to go with the different date
-                if (info == null || info.getId() == null) {
+                if (info.getId() == null) {
                     issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                             "The info is missing or corrupt: " + info, response);
-                    return;
                 } else {
                     CookieInfo newInfo = new CookieInfo(info.getId())
                             .setName(info.getName())
@@ -97,12 +104,13 @@ public class EmailLoginReturn extends BaseServlet {
                     handler.setCookie(request, response, newInfo);
                     LidUser.setInfo(newInfo);
                     loginAction.act(newInfo);
-                    response.sendRedirect(redirectURL(info));
+
+                    String computedRedirect = Helpers.computeRedirect(redirectURL(info), handleHolder, handleRedirect);
+                    response.sendRedirect(response.encodeRedirectURL(computedRedirect));
                 }
             } catch (Exception e) {
                 issue(MediaType.PLAIN_TEXT_UTF_8, HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                         "Can't set user: " + e.getMessage(), response);
-                return;
             }
         }
     }
