@@ -6,7 +6,7 @@
     <!-- The Basics -->
     <groupId>com.cilogi</groupId>
     <artifactId>lid</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <packaging>jar</packaging>
     <name>lid</name>
     <description>Lightweight Identity for AppEngine</description>
@@ -17,7 +17,7 @@
         <downloadSources>true</downloadSources>
         <appengine.target.version>1.9.27</appengine.target.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jackson.version>2.6.0</jackson.version>
+        <jackson.version>2.9.3</jackson.version>
         <github.global.server>github</github.global.server>
     </properties>
 
@@ -40,26 +40,26 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.7</version>
+            <version>1.7.25</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.7</version>
+            <version>1.7.25</version>
         </dependency>
 
         <!-- Test scope -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>4.12</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.14.8</version>
+            <version>1.16.18</version>
         </dependency>
         <dependency>
             <groupId>com.google.appengine</groupId>
@@ -87,17 +87,17 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>3.0</version>
+            <version>4.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-servlet</artifactId>
-            <version>3.0</version>
+            <version>4.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>18.0</version>
+            <version>23.0</version>
         </dependency>
         <dependency>
           <groupId>com.fasterxml.jackson.core</groupId>
@@ -132,12 +132,12 @@
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
-            <version>1.4.1</version>
+            <version>1.6</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.10</version>
+            <version>1.11</version>
         </dependency>
         <dependency>
             <groupId>org.scribe</groupId>
@@ -152,7 +152,7 @@
         <dependency>
           <groupId>com.github.spullara.mustache.java</groupId>
           <artifactId>compiler</artifactId>
-          <version>0.8.17</version>
+          <version>0.9.5</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
