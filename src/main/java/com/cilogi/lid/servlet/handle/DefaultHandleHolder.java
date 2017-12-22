@@ -1,7 +1,6 @@
-// Copyright (c) 2015 Cilogi. All Rights Reserved.
+// Copyright (c) 2017 Cilogi. All Rights Reserved.
 //
-// File:        IHandleHolder.java  (24/11/15)
-// Author:      tim
+// File:        DefaultHaldleHolder.java
 //
 // Copyright in the whole and every part of this source file belongs to
 // Cilogi (the Author) and may not be used, sold, licenced, 
@@ -20,6 +19,20 @@
 
 package com.cilogi.lid.servlet.handle;
 
-public interface IHandleHolder {
-    String handle(String userName);
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
+public class DefaultHandleHolder implements IHandleHolder {
+    @SuppressWarnings("unused")
+    static final Logger LOG = LoggerFactory.getLogger(DefaultHandleHolder.class);
+
+    public DefaultHandleHolder() {
+
+    }
+
+    @Override
+    public String handle(String userName) {
+        return userName;
+    }
 }
